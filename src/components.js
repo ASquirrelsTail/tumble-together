@@ -5,6 +5,9 @@ class Component {
   flip() {
     this.facing = (this.facing + 1) % 2;
   }
+  get name() {
+    return this.constructor.name;
+  }
 }
 
 class SymetricalComponent extends Component {
@@ -47,4 +50,4 @@ class Gear extends SymetricalComponent {
   static code = [61];
 }
 
-export default {Ramp, Bit, GearBit, Crossover, Interceptor, Gear};
+export default {Ramp, Bit, Crossover, Interceptor, GearBit, Gear};

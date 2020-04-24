@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 3.1749999 3.1749999"
+   height="3.175mm"
+   width="3.175mm">
+  <title
+     id="title46077">Blue Marble</title>
+  <defs
+     id="defs2" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Blue Marble</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-20.108323,-146.50642)"
+     id="layer1">
+    <g
+       transform="translate(67.963613,-9.6854754)"
+       id="g5028">
+      <g
+         transform="matrix(-1,0,0,1,125.67357,2.2386856e-6)"
+         id="g5037">
+        <circle
+           transform="scale(-1,1)"
+           r="1.5875"
+           cy="157.77939"
+           cx="-171.94136"
+           id="path4766-5-1"
+           style="opacity:1;fill:#0022ed;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.99909584;paint-order:markers fill stroke" />
+        <circle
+           transform="scale(-1,1)"
+           r="0.40632439"
+           cy="157.16516"
+           cx="-172.51778"
+           id="path4797-4"
+           style="opacity:1;fill:#ffffff;fill-opacity:0.44936709;stroke:none;stroke-width:1.53571427;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.99909584;paint-order:markers fill stroke" />
+      </g>
+    </g>
+  </g>
+</svg>

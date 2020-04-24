@@ -1,6 +1,7 @@
 import svelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import babel from 'rollup-plugin-babel';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 
@@ -34,6 +35,9 @@ export default {
 			browser: true,
 			dedupe: ['svelte']
 		}),
+		babel({
+		    exclude: "node_modules/**"
+		  }),
 		commonjs(),
 
 		// In dev mode, call `npm run start` once

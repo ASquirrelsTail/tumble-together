@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="15.05208mm"
+   height="15.05208mm"
+   viewBox="0 0 15.05208 15.05208"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="interceptor.svg">
+  <title
+     id="title19017">Interceptor</title>
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="11.313708"
+     inkscape:cx="25.671285"
+     inkscape:cy="29.004607"
+     inkscape:document-units="mm"
+     inkscape:current-layer="g5028"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4760"
+       originx="-123.31889"
+       originy="-128.54774" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Interceptor</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-123.31889,-153.40017)">
+    <g
+       id="g5028"
+       transform="translate(67.963613,-9.6854754)">
+      <g
+         transform="matrix(-1,0,0,1,286.05974,-6.4828716)"
+         id="g5109">
+        <path
+           style="fill:none;stroke:#3d3d3d;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 228.07259,172.31225 c 2.19724,2.11667 2.12018,3.71326 2.12018,3.71326 h -14.03945 c 0,0 -0.0732,-1.59659 2.12401,-3.71326"
+           id="path4967-2"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cccc" />
+        <path
+           style="opacity:1;fill:none;fill-opacity:1;stroke:#3d3d3d;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+           id="path4776-4-9"
+           sodipodi:type="arc"
+           sodipodi:cx="-223.23233"
+           sodipodi:cy="176.81668"
+           sodipodi:rx="4.4979167"
+           sodipodi:ry="4.4979167"
+           sodipodi:start="0.87147728"
+           sodipodi:end="2.2709256"
+           sodipodi:open="true"
+           d="m -220.33704,180.25885 a 4.4979167,4.4979167 0 0 1 -5.79337,-0.002"
+           transform="scale(-1,1)" />
+        <path
+           style="fill:none;stroke:#3d3d3d;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 223.24746,176.02551 v 5.29167"
+           id="path4999-8"
+           inkscape:connector-curvature="0" />
+        <circle
+           style="opacity:1;fill:#121212;fill-opacity:1;stroke:#3d3d3d;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+           id="path4764-3-42-2"
+           cx="-223.24838"
+           cy="177.09967"
+           r="1.0583333"
+           transform="scale(-1,1)" />
+      </g>
+    </g>
+  </g>
+</svg>
