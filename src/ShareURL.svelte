@@ -30,5 +30,9 @@
 <style>
   #copy-text {
     /*display: none;*/
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+    opacity: 0;
   }
 </style>

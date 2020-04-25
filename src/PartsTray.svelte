@@ -6,8 +6,10 @@
   const dispatch = createEventDispatcher();
 
   function grab(e, part) {
-    if (e.button === 0 && part.count){
+    if ((e.type === 'mousedown' && e.button === 0) ||
+        (e.type === 'touchstart' && e.touches.length === 1) && part.count) {
       e.preventDefault();
+      e.stopPropagation();
       console.log(`Grabbed ${part.name}`);
       part.count -= 1;
       parts = parts;
@@ -18,7 +20,9 @@
 
 <div id="parts-tray">
   {#each parts as part}
-  <div class="part" class:unavailable={!part.count} on:mousedown="{e => {grab(e, part)}}">
+  <div class="part" class:unavailable={!part.count}
+      on:mousedown="{e => grab(e, part)}"
+      on:touchstart="{e => grab(e, part)}">
     <img src="images/{part.name}.svg" alt={part.name}>
     <span class="count">x 
       {#if part.count != Infinity}
@@ -34,13 +38,27 @@
 <style>
   #parts-tray {
     display: flex;
-    flex-direction: column;
     justify-content: flex-start;
     height: 100%;
+    width: 440px;
+    padding: 10px;
+    border: 3px solid grey;
+    border-radius: 10px;
+  }
+  @media (min-aspect-ratio: 9/8) {
+    #parts-tray {
+      flex-direction: column;
+      width: 90px;
+    }
   }
   .part {
     cursor: grab;
     width: 70px;
+  }
+  .part img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
   }
   .part.unavailable {
     cursor: default;

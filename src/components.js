@@ -1,4 +1,5 @@
 class Component {
+  static requiresSlot = true;
   constructor(facing=0) {
     this.facing = facing;
   }
@@ -7,6 +8,9 @@ class Component {
   }
   get name() {
     return this.constructor.name;
+  }
+  get requiresSlot() {
+    return this.constructor.requiresSlot;
   }
 }
 
@@ -46,6 +50,7 @@ class Interceptor extends SymetricalComponent {
 }
 
 class Gear extends SymetricalComponent {
+  static requiresSlot = false;
   static name = 'gear';
   static code = [61];
 }
