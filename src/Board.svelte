@@ -2,14 +2,12 @@
   import createBoard from './createBoard.js';
   import { createEventDispatcher } from 'svelte';
 
-  export let holding;
   export let board = createBoard();
+  export let holding;
+  export let lastGrab;
   export let boardElement;
 
   const dispatch = createEventDispatcher();
-
-  let lastGrab = {x: false, y: false};
-  let flipTimeout = false;
 
   function isValid(x, y) {
     // Retrusn true for positions on the 11x11 grid that can be used.
@@ -24,33 +22,15 @@
   }
 
   function grab(e, x, y) {
-    if (!holding && board[y][x] &&
-        ((e.type === 'mousedown' && e.button === 0) ||
-         (e.type === 'touchstart' && e.touches.length === 1))){
+    if (((e.type === 'mousedown' && e.button === 0) ||
+         (e.type === 'touchstart' && e.touches.length === 1)) &&
+        !holding && board[y][x]) {
       e.preventDefault();
       e.stopPropagation();
-      let part = board[y][x];
+      console.log(`Grabbed ${board[y][x].name}`);
+      holding = board[y][x];
       board[y][x] = false;
-      lastGrab = {x, y};
-      flipTimeout = setTimeout(() => lastGrab = {x: false, y: false}, 600);
-      console.log(`Grabbed ${part.name}`);
-      dispatch('grab', part);
-      console.log(e);
-    }
-  }
-  
-  function drop(e, x, y) {
-    if (((e.type === 'mouseup' && e.button === 0) ||
-         (e.type === 'touchend' && e.changedTouches.length === 1 && e.touches.length === 0)) && 
-        holding && (!holding.requiresSlot || hasSlot(x, y)) && !board[y][x]) {
-      if (lastGrab.x === x && lastGrab.y === y) {
-        holding.flip();
-        console.log(`Flipped ${holding.name}`);
-      }
-      if (flipTimeout) clearTimeout(flipTimeout);
-      board[y][x] = holding;
-      console.log(`Placed ${holding.name}`);
-      holding = false;
+      lastGrab = {x, y, timeout: setTimeout(() => lastGrab = {x: false, y: false, timeout: false}, 300)};
     }
   }
 
@@ -62,11 +42,8 @@
     {#each row as part, x (x)}
       {#if isValid(x, y)}
       <div class:occupied={part} class:slot="{hasSlot(x, y)}" class="position"
-          on:mouseup="{e => drop(e, x, y)}"
           on:mousedown="{e => grab(e, x, y)}"
-          on:touchstart="{e => grab(e, x, y)}"
-          on:touchend="{e => drop(e, x, y)}"
-          on:touchmove="{e => console.log(e)}">
+          on:touchstart="{e => grab(e, x, y)}">
         {#if part}
           <img class:flipped={part.facing} class={part.name} src="images/{part.name}.svg" alt={part.name}>
         {/if}
@@ -105,6 +82,7 @@
   }
   .position img {
     margin: -3.445px;
+    pointer-events: none;
   }
   .slot .gear {
     transform: rotate(22.5deg);

@@ -36,6 +36,18 @@
     return Boolean((x + y) % 2) ;
   }
 
+  function getBoardPosition(pageX, pageY) {
+    let boardRect = boardElement.getBoundingClientRect();
+    let x = Math.floor((pageX - boardRect.left) / 50);
+    let y = Math.floor((pageY - boardRect.top) / 50);
+    if (pageX > boardRect.left && pageX < boardRect.right &&
+        pageY > boardRect.top && pageY < boardRect.bottom &&
+        isValid(x, y)) return [x, y];
+    else return false;
+  }
+
+  let lastGrab = {x: false, y: false, timeout: false};
+
   function setMousePosition(e) {
     mousePosition.left = e.pageX;
     mousePosition.top = e.pageY;
@@ -52,23 +64,26 @@
   function drop(e, force=false) {
     if (holding && ((e.type === 'mouseup' && e.button === 0) ||
         (e.type === 'touchend' && e.changedTouches.length === 1 && e.touches.length === 0) || force)) {
-      let boardRect = boardElement.getBoundingClientRect();
-      let x = Math.floor((e.changedTouches[0].pageX - boardRect.left) / 50);
-      let y = Math.floor((e.changedTouches[0].pageY - boardRect.top) / 50);
-      if (e.type === 'touchend' &&
-          e.changedTouches[0].pageX > boardRect.left && e.changedTouches[0].pageX < boardRect.right &&
-          e.changedTouches[0].pageY > boardRect.top && e.changedTouches[0].pageY < boardRect.bottom &&
-          (!holding.requiresSlot || hasSlot(x, y)) && isValid(x, y) && !board[y][x]) {
-        board[y][x] = holding;
+      let boardPosition;
+      if (e.type === 'touchend') boardPosition = getBoardPosition(e.changedTouches[0].pageX, e.changedTouches[0].pageY);
+      else boardPosition = getBoardPosition(e.pageX, e.pageY);
+      if (boardPosition && (!holding.requiresSlot || hasSlot(...boardPosition)) &&
+          !board[boardPosition[1]][boardPosition[0]]) {
+        board[boardPosition[1]][boardPosition[0]] = holding;
+        if (lastGrab.x === boardPosition[0] && lastGrab.y === boardPosition[1]) {
+          holding.flip();
+          console.log(`Flipped ${holding.name}`);
+        }
         console.log(`Placed ${holding.name}`);
       }else{
         parts.find(part => part.name === holding.name).count++;
         parts = parts;
         console.log(`Dropped ${holding.name}`);
       }
-        holding = false;
-        e.preventDefault();
-        e.stopPropagation();
+      if (lastGrab.timeout) window.clearTimeout(lastGrab.timeout)
+      holding = false;
+      e.preventDefault();
+      e.stopPropagation();
     }
   }
 
@@ -85,8 +100,8 @@
     on:touchmove={touchMove}
     on:touchend="{e => drop(e)}">
   <Board bind:boardElement={boardElement} bind:board={board} bind:holding={holding}
-    on:grab="{grab}"/>
-  <PartsTray bind:parts={parts} on:grab="{grab}"/>
+    on:grab="{grab}" bind:lastGrab={lastGrab}/>
+  <PartsTray bind:parts={parts} bind:holding={holding}/>
 </div>
 <Hand {holding} {mousePosition}/>
 <ShareURL {board} {parts} />

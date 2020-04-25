@@ -1,19 +1,18 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-
   export let parts = [];
+  export let holding;
 
-  const dispatch = createEventDispatcher();
 
   function grab(e, part) {
     if ((e.type === 'mousedown' && e.button === 0) ||
-        (e.type === 'touchstart' && e.touches.length === 1) && part.count) {
+        (e.type === 'touchstart' && e.touches.length === 1) && 
+        part.count && !holding) {
       e.preventDefault();
       e.stopPropagation();
       console.log(`Grabbed ${part.name}`);
       part.count -= 1;
       parts = parts;
-      dispatch('grab', new part());
+      holding = new part();
     }
   }
 </script>
