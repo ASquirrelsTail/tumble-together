@@ -4,5 +4,7 @@ A web based version of the [Turing Tumble](https://www.turingtumble.com/), made 
 
 ## Technologies
 
-- Flask
+- Node
+- Express
+- Socket.io
 - Svelte.js

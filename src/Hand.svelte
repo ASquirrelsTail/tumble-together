@@ -6,7 +6,7 @@
 {#if holding}
 <div id="hand" style="top: {mousePosition.top}px;
     left: {mousePosition.left}px;">
-  <img class:flipped={holding.facing} src="images/{holding.name}.svg" alt={holding.name}>
+  <img class:flipped={holding.facing} src="/images/{holding.name}.svg" alt={holding.name}>
 </div>
 {/if}
 

@@ -31,6 +31,7 @@
       holding = board[y][x];
       board[y][x] = false;
       lastGrab = {x, y, timeout: setTimeout(() => lastGrab = {x: false, y: false, timeout: false}, 300)};
+      dispatch('grab');
     }
   }
 
@@ -45,7 +46,7 @@
           on:mousedown="{e => grab(e, x, y)}"
           on:touchstart="{e => grab(e, x, y)}">
         {#if part}
-          <img class:flipped={part.facing} class={part.name} src="images/{part.name}.svg" alt={part.name}>
+          <img class:flipped={part.facing} class={part.name} src="/images/{part.name}.svg" alt={part.name}>
         {/if}
       </div>
       {:else}

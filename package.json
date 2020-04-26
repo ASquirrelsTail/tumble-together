@@ -5,6 +5,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public",
+    "server": "node index.js",
     "test": "jest"
   },
   "devDependencies": {
@@ -23,7 +24,9 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
-    "sirv-cli": "^0.4.4"
+    "express": "^4.17.1",
+    "sirv-cli": "^0.4.4",
+    "socket.io": "^2.3.0"
   },
   "babel": {
     "plugins": [

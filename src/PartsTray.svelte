@@ -22,7 +22,7 @@
   <div class="part" class:unavailable={!part.count}
       on:mousedown="{e => grab(e, part)}"
       on:touchstart="{e => grab(e, part)}">
-    <img src="images/{part.name}.svg" alt={part.name}>
+    <img src="/images/{part.name}.svg" alt={part.name}>
     <span class="count">x 
       {#if part.count != Infinity}
         {part.count}

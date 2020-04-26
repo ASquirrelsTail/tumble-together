@@ -5,6 +5,8 @@
   import ShareURL from './ShareURL.svelte';
   import components from './components.js';
   import createBoard from './createBoard.js';
+  import encodeBoard from './encodeBoard.js';
+  import io from 'socket.io-client'
 
   let holding = false;
   let mousePosition = {};
@@ -20,9 +22,18 @@
     else part.count = Infinity;
   });
 
+  let socket = false;
   let code = false;
-  if (urlParams.has('code')) code = urlParams.get('code');
+  if (window.location.pathname === '/room/') {
+    socket = io.connect(window.location.origin);
+  } else if (urlParams.has('code')) code = urlParams.get('code');
   let board = createBoard(code);
+
+  if (socket) socket.on('board', (code) => board = createBoard(code));
+
+  function sendBoard() {
+    if (socket) socket.emit('board', encodeBoard(board));
+  }
 
   function isValid(x, y) {
     // Retrusn true for positions on the 11x11 grid that can be used.
@@ -75,6 +86,7 @@
           console.log(`Flipped ${holding.name}`);
         }
         console.log(`Placed ${holding.name}`);
+        sendBoard();
       }else{
         parts.find(part => part.name === holding.name).count++;
         parts = parts;
@@ -87,10 +99,6 @@
     }
   }
 
-  function grab(e) {
-    holding = e.detail;
-  }
-
 </script>
 
 <div id="play-area" class:grabbed={holding}
@@ -100,7 +108,7 @@
     on:touchmove={touchMove}
     on:touchend="{e => drop(e)}">
   <Board bind:boardElement={boardElement} bind:board={board} bind:holding={holding}
-    on:grab="{grab}" bind:lastGrab={lastGrab}/>
+    on:grab="{sendBoard}" bind:lastGrab={lastGrab}/>
   <PartsTray bind:parts={parts} bind:holding={holding}/>
 </div>
 <Hand {holding} {mousePosition}/>
