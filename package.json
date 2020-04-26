@@ -4,8 +4,8 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public",
-    "server": "node index.js",
+    "local": "sirv public",
+    "start": "node index.js",
     "test": "jest"
   },
   "devDependencies": {
