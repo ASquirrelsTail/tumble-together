@@ -1,5 +1,5 @@
 <script>
-  import encodeBoard from './encodeBoard.js';
+  import Board from './boardUtils.js';
 
   export let board;
   export let parts;
@@ -7,7 +7,7 @@
   let copyText;
 
   function copyToClipboard() {
-    let code = encodeBoard(board);
+    let code = board.encode();
     let query = parts.filter(part => part.count !== Infinity).map(part => `${part.name}=${part.count}`).join('&');
 
     let url = `${window.location.origin}${window.location.pathname}?code=${code}&${query}`;

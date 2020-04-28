@@ -1,9 +1,8 @@
-import createBoard from '../src/createBoard.js';
-import encodeBoard from '../src/encodeBoard.js';
+import Board from '../src/boardUtils.js';
 
-describe('createBoard', () => {
+describe('Board.create()', () => {
     it('should return an empty 11x11 array', () => {
-      let board = createBoard()
+      let board = Board.create()
 
       expect(typeof board).toBe(typeof []);
       expect(board).toHaveLength(11);
@@ -19,19 +18,19 @@ describe('createBoard', () => {
     });
 
     it('should raise an error if the code is not base64 encoded', () => {
-      expect(() => {createBoard('a[5]a;a0aaaa')}).toThrow();
+      expect(() => {Board.create('a[5]a;a0aaaa')}).toThrow();
     });
 
     it('should raise an error if the code is too short', () => {
-      expect(() => {createBoard('1U654')}).toThrow();
+      expect(() => {Board.create('1U654')}).toThrow();
     });
 
     it('should raise an error if the code contains unused chracters', () => {
-      expect(() => {createBoard('1U654xaaaaaaaa')}).toThrow();
+      expect(() => {Board.create('1U654xaaaaaaaa')}).toThrow();
     });
 
     it('should return an empty 11x11 array with code "aaaaaaaaaaa"', () => {
-      let board = createBoard('aaaaaaaaaaa')
+      let board = Board.create('aaaaaaaaaaa')
 
       expect(typeof board).toBe(typeof []);
       expect(board).toHaveLength(11);
@@ -47,9 +46,9 @@ describe('createBoard', () => {
     });
 
     it('should re-encode to the same input', () => {
-      let board = createBoard('aaaaaaaaaaa');
-      expect(encodeBoard(board)).toBe('aaaaaaaaaaa');
-      board = createBoard('aaaST8aaaaaaa');
-      expect(encodeBoard(board)).toBe('aaaST8aaaaaaa');
+      let board = Board.create('aaaaaaaaaaa');
+      expect(board.encode()).toBe('aaaaaaaaaaa');
+      board = Board.create('aaaST8aaaaaaa');
+      expect(board.encode()).toBe('aaaST8aaaaaaa');
     });
 });

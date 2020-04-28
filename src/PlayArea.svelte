@@ -1,11 +1,10 @@
 <script>
-  import Board from './Board.svelte';
+  import GameBoard from './GameBoard.svelte';
   import PartsTray from  './PartsTray.svelte';
   import Hand from './Hand.svelte';
   import ShareURL from './ShareURL.svelte';
   import components from './components.js';
-  import createBoard from './createBoard.js';
-  import encodeBoard from './encodeBoard.js';
+  import Board from './boardUtils.js';
   import io from 'socket.io-client'
 
   let holding = false;
@@ -27,33 +26,21 @@
   if (window.location.pathname === '/room/') {
     socket = io.connect(window.location.origin);
   } else if (urlParams.has('code')) code = urlParams.get('code');
-  let board = createBoard(code);
+  let board = Board.create(code);
 
-  if (socket) socket.on('board', (code) => board = createBoard(code));
+  if (socket) socket.on('board', (code) => board = Board.create(code));
 
   function sendBoard() {
-    if (socket) socket.emit('board', encodeBoard(board));
-  }
-
-  function isValid(x, y) {
-    // Retrusn true for positions on the 11x11 grid that can be used.
-    if (y === 0 && (x < 2 || x > 8 || x === 5)) return false;
-    else if (y === 1 && (x === 0 || x === 10)) return false;
-    else if (y === 10 && x != 5) return false;
-    else return true;
-  }
-
-  function hasSlot(x, y) {
-    return Boolean((x + y) % 2) ;
+    if (socket) socket.emit('board', board.encode());
   }
 
   function getBoardPosition(pageX, pageY) {
     let boardRect = boardElement.getBoundingClientRect();
-    let x = Math.floor((pageX - boardRect.left) / 50);
-    let y = Math.floor((pageY - boardRect.top) / 50);
+    let x = Math.floor((pageX - boardRect.left) / (boardRect.width / board[0].length));
+    let y = Math.floor((pageY - boardRect.top) / (boardRect.height / board.length));
     if (pageX > boardRect.left && pageX < boardRect.right &&
         pageY > boardRect.top && pageY < boardRect.bottom &&
-        isValid(x, y)) return [x, y];
+        board.isValid(x, y)) return [x, y];
     else return false;
   }
 
@@ -78,7 +65,7 @@
       let boardPosition;
       if (e.type === 'touchend') boardPosition = getBoardPosition(e.changedTouches[0].pageX, e.changedTouches[0].pageY);
       else boardPosition = getBoardPosition(e.pageX, e.pageY);
-      if (boardPosition && (!holding.requiresSlot || hasSlot(...boardPosition)) &&
+      if (boardPosition && (!holding.requiresSlot || board.hasSlot(...boardPosition)) &&
           !board[boardPosition[1]][boardPosition[0]]) {
         board[boardPosition[1]][boardPosition[0]] = holding;
         if (lastGrab.x === boardPosition[0] && lastGrab.y === boardPosition[1]) {
@@ -107,7 +94,7 @@
     on:mouseleave="{e => drop(e, true)}"
     on:touchmove={touchMove}
     on:touchend="{e => drop(e)}">
-  <Board bind:boardElement={boardElement} bind:board={board} bind:holding={holding}
+  <GameBoard bind:boardElement={boardElement} bind:board={board} bind:holding={holding}
     on:grab="{sendBoard}" bind:lastGrab={lastGrab}/>
   <PartsTray bind:parts={parts} bind:holding={holding}/>
 </div>
