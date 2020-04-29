@@ -60,7 +60,7 @@
   }
 
   function drop(e, force=false) {
-    if (holding && ((e.type === 'mouseup' && e.button === 0) ||
+    if (holding && !board.marble && ((e.type === 'mouseup' && e.button === 0) ||
         (e.type === 'touchend' && e.changedTouches.length === 1 && e.touches.length === 0) || force)) {
       let boardPosition;
       if (e.type === 'touchend') boardPosition = getBoardPosition(e.changedTouches[0].pageX, e.changedTouches[0].pageY);
@@ -95,7 +95,7 @@
     on:touchmove={touchMove}
     on:touchend="{e => drop(e)}">
   <GameBoard bind:boardElement={boardElement} bind:board={board} bind:holding={holding}
-    on:grab="{sendBoard}" bind:lastGrab={lastGrab}/>
+    on:grab={sendBoard} bind:lastGrab={lastGrab}/>
   <PartsTray bind:parts={parts} bind:holding={holding}/>
 </div>
 <Hand {holding} {mousePosition}/>
@@ -104,13 +104,13 @@
 <style>
   #play-area {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
   }
-  @media (min-aspect-ratio: 9/8) {
+  @media (max-aspect-ratio: 7/9) {
     #play-area {
-      flex-direction: row;
+      flex-direction: column;
     }
   }
   .grabbed {

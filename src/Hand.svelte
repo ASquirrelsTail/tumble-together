@@ -17,7 +17,18 @@
     cursor: grabbing;
     pointer-events: none;
   }
+  #hand img {
+    width: 7.2vh;
+    height: 7.2vh;
+  }
   .flipped {
     transform: scaleX(-1);
+  }
+
+  @media (max-aspect-ratio: 7/9) {
+    #hand img{
+      width: 9.6vw;
+      height: 9.6vw;
+    }
   }
 </style>

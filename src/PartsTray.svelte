@@ -37,22 +37,16 @@
 <style>
   #parts-tray {
     display: flex;
+    flex-direction: column;
     justify-content: flex-start;
-    height: 100%;
-    width: 440px;
-    padding: 10px;
+    width: 8vh;
+    padding: 0.4vh;
     border: 3px solid grey;
     border-radius: 10px;
   }
-  @media (min-aspect-ratio: 9/8) {
-    #parts-tray {
-      flex-direction: column;
-      width: 90px;
-    }
-  }
   .part {
     cursor: grab;
-    width: 70px;
+    width: 100%;
   }
   .part img {
     display: block;
@@ -72,9 +66,24 @@
   }
   .count .infinity {
     position: relative;
-    top: 0.55rem;
-    font-size: 3rem;
+    top: 0.35rem;
+    font-size: 2rem;
     font-weight: normal;
     line-height: 0;
+  }
+
+  @media (max-aspect-ratio: 7/9) {
+    #parts-tray {
+      flex-direction: row;
+      width: unset;
+      padding: 0.2vw;
+    }
+    .part {
+      width: unset;
+    }
+    .part img{
+      width: 9.6vw;
+      height: 9.6vw;
+    }
   }
 </style>

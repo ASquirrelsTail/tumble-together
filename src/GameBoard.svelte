@@ -9,18 +9,12 @@
   export let lastGrab;
   export let boardElement;
 
-  let marbles = {
-    left: [...Array(8)].map(i => new BlueMarble()),
-    right: [...Array(8)].map(i => new RedMarble()),
-    results: []
-  }
-
   const dispatch = createEventDispatcher();
 
   function grab(e, x, y) {
     if (((e.type === 'mousedown' && e.button === 0) ||
          (e.type === 'touchstart' && e.touches.length === 1)) &&
-        !holding && board[y][x]) {
+        !holding && !board.marble && board[y][x]) {
       e.preventDefault();
       e.stopPropagation();
       console.log(`Grabbed ${board[y][x].name}`);
@@ -31,36 +25,61 @@
     }
   }
 
-  function triggerLever(side='left') {
-    if (!board.marble && marbles[side].length) {
-      let result = board.startRun(marbles[side].pop(), side);
-      if (result) {
-        marbles.results.push(result.marble);
-        board = board;
-        setTimeout(() => triggerLever(result.side), 500);
-      }
-      marbles = marbles;
-    }
-  }
+  let marbles = {numbers: {left: 8, right: 8}};
+  const urlParams = new URLSearchParams(window.location.search);
+  Object.keys(marbles.numbers).forEach(side => {
+    if (urlParams.has(side) && parseInt(urlParams.get(side)) != NaN)
+      marbles.numbers[side] = Math.min(20, Math.max(0, parseInt(urlParams.get(side))));
+    else marbles.numbers[side] = 8;
+  });
+
+
+  resetMarbles();
 
   function resetMarbles() {
     if (board.marble) {
-      marbles.results.push(board.marble);
       board.marble = false;
     }
-    marbles.results.forEach((marble) => {
-      if (marble.color === 'blue') marbles.left.push(marble);
-      else marbles.right.push(marble);
-      marbles.results = [];
-      marbles = marbles;
-    });
+    marbles.results = [];
+    marbles.left = [...Array(marbles.numbers.left)].map(i => new BlueMarble());
+    marbles.right = [...Array(marbles.numbers.right)].map(i => new RedMarble());
+    marbles = marbles;
+  }
+
+  function triggerLever(side='left') {
+    if (!board.marble && marbles[side].length) {
+      try {
+        let result = board.startRun(marbles[side].pop(), side);
+        if (result) {
+          marbles.results.push(result.marble);
+          board = board;
+          setTimeout(() => triggerLever(result.side), 500);
+        }
+        marbles = marbles;
+      }
+      catch(err) {
+        resetMarbles();
+      }
+    }
   }
 
 </script>
 <div id="board-container">
   <div id="top-trays">
-    <MarbleTray marbles={marbles.left}/>
-    <MarbleTray marbles={marbles.right}/>
+    <div class="container">
+      <div class="marble-numbers">
+        <img src="/images/marbleblue.svg" alt="{marbles.numbers.left} Blue Marbles">
+        x {marbles.numbers.left}
+      </div>
+      <MarbleTray marbles={marbles.left}/>
+    </div>
+    <div class="container">
+      <div class="marble-numbers">
+        <img src="/images/marblered.svg" alt="{marbles.numbers.right} Red Marbles">
+        x {marbles.numbers.right}
+      </div>
+      <MarbleTray direction="right" marbles={marbles.right}/>
+    </div>
   </div>
   <div id="board" bind:this={boardElement}>
     {#each board as row, y (y)}
@@ -94,19 +113,45 @@
     display: flex;
     justify-content: space-around;
   }
+  #top-trays .container {
+    width: 100%;
+  }
+  .marble-numbers {
+    text-align: center;
+    padding-bottom: 0.5em;
+    cursor: pointer;
+  }
+  .marble-numbers img {
+    height: 1.5em;
+    width: 1.5em;
+    margin-bottom: -0.4em;
+  }
   .row {
-    width: 550px;
-    height: 50px;
+    width: 66vh;
+    height: 6vh;
     overflow: visible;
   }
   .position {
     background-image: url(/images/bg-peg.svg);
     background-size: cover;
     display: inline-block;
-    width: 50px;
-    height: 50px;
+    width: 6vh;
+    height: 6vh;
     overflow: visible;
   }
+
+  @media (max-aspect-ratio: 7/9) {
+    .row {
+      width: 88vw;
+      height: 8vw;
+    }
+    .position {
+      width: 8vw;
+      height: 8vw;
+    }
+
+  }
+
   .position.slot {
     background-image: url(/images/bg-slot.svg);
   }
@@ -118,7 +163,9 @@
     cursor: grab;
   }
   .position img {
-    margin: -3.445px;
+    width: 120%;
+    height: 120%;
+    margin: -10%;
     pointer-events: none;
   }
   .slot .gear {
