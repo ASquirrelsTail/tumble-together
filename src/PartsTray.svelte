@@ -52,6 +52,8 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
+    width: 7.2vh;
+    height: 7.2vh;
   }
   .part.unavailable {
     cursor: default;

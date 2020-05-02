@@ -68,11 +68,12 @@ class Interceptor extends SymetricalComponent {
   static stopsMarble = true;
 }
 
-class Gear extends SymetricalComponent {
+class Gear extends Component {
   static requiresSlot = false;
   static name = 'gear';
-  static code = [61];
+  static code = [61, 62];
   static flipsNeighbors = true;
+  static stopsMarble = true;
 }
 
 export default {Ramp, Bit, Crossover, Interceptor, GearBit, Gear};

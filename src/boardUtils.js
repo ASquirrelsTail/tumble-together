@@ -6,7 +6,7 @@ export default class Board extends Array {
     super(...boardArray);
     this.complete = () => false;
   }
-  startRun(marble, start='left') {
+  async startRun(marble, start='left', onTick=() => {}) {
     if (this.marble) return false;
     this.marble = marble;
     this.position = {x: start === 'left' ? 3 : 7, y: 0};
@@ -14,7 +14,9 @@ export default class Board extends Array {
 
     let result;
 
+    await onTick();
     while (this.marble && this.tick()) {
+      await onTick();
       if (this.position.y === 11)
         result = {marble: this.marble, side: this.direction > 0 ? 'right' : 'left'};
       else if (this.position.y === 10 && this.position.x != 5) 
@@ -32,28 +34,8 @@ export default class Board extends Array {
       let part = this[this.position.y][this.position.x]
       if (part) {
         if (part.stopsMarble) return false;
-        if (part.flipsOnMarble) {
-          if (part.flipsNeighbors) {
-            let partsToFlip = new Set();
-            partsToFlip.add(part);
-            const adjacent = (x, y) => {
-              let adjacentPositions = [[1, 0], [-1, 0], [0, 1], [0, -1]].map(pos => [pos[0] + x, pos[1] + y]);
-              let adjacentFlippingPositions = adjacentPositions.filter(pos => {
-                let partAtPos = this.at(...pos);
-                console.log(partAtPos);
-                 return (partAtPos && partAtPos.flipsNeighbors &&
-                         !partsToFlip.has(partAtPos));
-              });
-              console.log(adjacentFlippingPositions);
-              adjacentFlippingPositions.forEach(pos => partsToFlip.add(this.at(...pos)));
-              adjacentFlippingPositions.forEach(pos => adjacent(...pos));
-            }
-            adjacent(this.position.x, this.position.y);
-            partsToFlip.forEach(part => part.flip());
-            console.log(partsToFlip);
-          }else part.flip();
-        }
         result = part.handleMarble(this.direction);
+        if (part.flipsOnMarble) this.flip(this.position.x, this.position.y)
         if (result) this.position = {x: this.position.x + result, y: this.position.y + 1};
         if (this.position.x < 0 && this.position.x > this[0].length) result = false;
       }
@@ -66,8 +48,8 @@ export default class Board extends Array {
     }
   }
   at(x, y) {
-    if ((this.position.x > 0 && this.position.x < this[0].length) &&
-        (this.position.y > 0 && this.position.y < this.length))
+    if ((x >= 0 && x < this[0].length) &&
+        (y >= 0 && y < this.length))
       return this[y][x];
     else return false;
   }
@@ -80,6 +62,31 @@ export default class Board extends Array {
   }
   hasSlot(x, y) {
     return Boolean((x + y) % 2) ;
+  }
+  flipableNeighbors(partX, partY) {
+    let part = this.at(partX, partY);
+    let partsToFlip = new Set();
+    if (part) {
+      partsToFlip.add(part);
+      if (part.flipsNeighbors) {
+        const adjacent = (x, y) => {
+          let adjacentPositions = [[1, 0], [-1, 0], [0, 1], [0, -1]].map(pos => [pos[0] + x, pos[1] + y]);
+          let adjacentFlippingPositions = adjacentPositions.filter(pos => {
+            let partAtPos = this.at(...pos);
+             return (partAtPos && partAtPos.flipsNeighbors &&
+                     !partsToFlip.has(partAtPos));
+          });
+          adjacentFlippingPositions.forEach(pos => partsToFlip.add(this.at(...pos)));
+          adjacentFlippingPositions.forEach(pos => adjacent(...pos));
+        }
+        adjacent(partX, partY);
+      }
+    }
+    console.log(partsToFlip);
+    return partsToFlip;
+  }
+  flip(x, y) {
+    this.flipableNeighbors(x, y).forEach(part => part.flip());
   }
   encode() {
     let encodedBoard = ''

@@ -60,19 +60,21 @@
   }
 
   function drop(e, force=false) {
-    if (holding && !board.marble && ((e.type === 'mouseup' && e.button === 0) ||
+    if (holding && ((e.type === 'mouseup' && e.button === 0) ||
         (e.type === 'touchend' && e.changedTouches.length === 1 && e.touches.length === 0) || force)) {
       let boardPosition;
       if (e.type === 'touchend') boardPosition = getBoardPosition(e.changedTouches[0].pageX, e.changedTouches[0].pageY);
       else boardPosition = getBoardPosition(e.pageX, e.pageY);
-      if (boardPosition && (!holding.requiresSlot || board.hasSlot(...boardPosition)) &&
+      if (!board.marble && boardPosition && (!holding.requiresSlot || board.hasSlot(...boardPosition)) &&
           !board[boardPosition[1]][boardPosition[0]]) {
         board[boardPosition[1]][boardPosition[0]] = holding;
         if (lastGrab.x === boardPosition[0] && lastGrab.y === boardPosition[1]) {
-          holding.flip();
+          board.flip(...boardPosition);
           console.log(`Flipped ${holding.name}`);
         }
         console.log(`Placed ${holding.name}`);
+        let flipableNeighbors = Array.from(board.flipableNeighbors(...boardPosition));
+        if (flipableNeighbors.length > 1) holding.facing = flipableNeighbors[1].facing;
         sendBoard();
       }else{
         parts.find(part => part.name === holding.name).count++;
