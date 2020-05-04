@@ -9,18 +9,21 @@ export default class Board extends Array {
   async startRun(marble, start='left', onTick=() => {}) {
     if (this.marble) return false;
     this.marble = marble;
-    this.position = {x: start === 'left' ? 3 : 7, y: 0};
+    this.position = {x: start === 'left' ? 3 : 7, y: -1};
     this.direction = start === 'left' ? 1 : -1;
 
     let result;
 
     await onTick();
+    this.position.y++;
+
+    await onTick();
     while (this.marble && this.tick()) {
-      await onTick();
       if (this.position.y === 11)
         result = {marble: this.marble, side: this.direction > 0 ? 'right' : 'left'};
       else if (this.position.y === 10 && this.position.x != 5) 
         result = {marble: this.marble, side: this.position.x > 5 ? 'right' : 'left'};
+      else await onTick();
       if (result) {
         this.marble = false;
         return result;
@@ -82,7 +85,6 @@ export default class Board extends Array {
         adjacent(partX, partY);
       }
     }
-    console.log(partsToFlip);
     return partsToFlip;
   }
   flip(x, y) {

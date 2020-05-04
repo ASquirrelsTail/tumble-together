@@ -41,8 +41,9 @@
     justify-content: flex-start;
     width: 8vh;
     padding: 0.4vh;
-    border: 3px solid grey;
+    border: 3px solid #c8c8c8;
     border-radius: 10px;
+    margin: 10px;
   }
   .part {
     cursor: grab;

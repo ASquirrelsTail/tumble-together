@@ -2,7 +2,7 @@
   import Board from './boardUtils.js';
   import MarbleTray from './MarbleTray.svelte';
   import {BlueMarble, RedMarble} from './marbles.js';
-  import {createEventDispatcher} from 'svelte';
+  import {createEventDispatcher, tick} from 'svelte';
 
   export let board = Board.create();
   export let holding;
@@ -33,6 +33,7 @@
     else marbles.numbers[side] = 8;
   });
 
+  let marbleElement;
 
   resetMarbles();
 
@@ -44,13 +45,24 @@
     marbles.left = [...Array(marbles.numbers.left)].map(i => new BlueMarble());
     marbles.right = [...Array(marbles.numbers.right)].map(i => new RedMarble());
     marbles = marbles;
+    board.position = false;
+    board = board;
   }
+
+  let reset = false;
 
   function triggerLever(side='left') {
     if (!board.marble && marbles[side].length) {
-      board.startRun(marbles[side].pop(), side, () => {
+      board.startRun(marbles[side].pop(), side, async () => {
         board = board;
-        return new Promise(resolve => setTimeout(resolve, 300));
+        reset = true; // Applies reset class to clear transition based animations.
+        await tick();
+        setTimeout(() => reset = false, 1);
+        return new Promise(resolve => {
+          marbleElement.addEventListener('animationend', resolve, {once: true});
+          marbleElement.addEventListener('oTransitionEnd', resolve, {once: true});
+          marbleElement.addEventListener('webkitTransitionEnd', resolve, {once: true});
+        });
       }).then(result => {
         if (result) {
           marbles.results.push(result.marble);
@@ -95,6 +107,18 @@
       <MarbleTray direction="right" marbles={marbles.right}/>
     </div>
   </div>
+  <div id="start-ramps">
+    <div class="marble-start">
+      {#if (board.marble && board.position && ((board.direction === 1 && board.position.y === -1)))}
+        <img bind:this={marbleElement} class="marble" src="/images/marble{board.marble.color}.svg" alt="">
+      {/if}
+    </div>
+    <div class="marble-start flipped">
+      {#if (board.marble && board.position && ((board.direction === -1 && board.position.y === -1)))}
+        <img bind:this={marbleElement} class="marble" src="/images/marble{board.marble.color}.svg" alt="">
+      {/if}
+    </div>
+  </div>
   <div id="board" bind:this={boardElement}>
     {#each board as row, y (y)}
     <div class="row">
@@ -105,10 +129,11 @@
             on:touchstart="{e => grab(e, x, y)}">
           {#if part}
           <div class:flipped={part.facing} class={part.name} class:right="{marbleDirection(x, y)}" >
-            <div class="wrapper" class:down="{isMoving(x, y)}">
+            <div class="wrapper" class:down="{isMoving(x, y)}"
+                class:reset>
               <img class="part" src="/images/{part.name}.svg" alt={part.name}>
               {#if hasMarble(x, y)}
-                <img class="marble" src="/images/marble{board.marble.color}.svg" alt="">
+                <img bind:this={marbleElement} class="marble" src="/images/marble{board.marble.color}.svg" alt="">
               {/if}
             </div>
           </div>
@@ -121,15 +146,21 @@
     </div>
     {/each}
   </div>
-  <div>
+  <div id="levers">
     <button on:click="{() => triggerLever('left')}">Trigger Left</button>
     <button on:click="{() => triggerLever('right')}">Trigger Right</button>
+  </div>
+  <div id="results-tray">
+    <MarbleTray result={true} direction="right" marbles={marbles.results}/>
     <button on:click="{resetMarbles}">Reset</button>
   </div>
-  <MarbleTray marbles={marbles.results}/>
 </div>
 
 <style>
+  #board-container {
+    border: 3px solid #c8c8c8;
+    border-radius: 10px;
+  }
   #top-trays {
     display: flex;
     justify-content: space-around;
@@ -160,7 +191,6 @@
     height: 6vh;
     overflow: visible;
   }
-
   @media (max-aspect-ratio: 7/9) {
     .row {
       width: 88vw;
@@ -183,6 +213,11 @@
   .position.occupied {
     cursor: grab;
   }
+
+  .occupied div {
+    pointer-events: none;
+  }
+
   .wrapper {
     position: relative;
   }
@@ -190,7 +225,6 @@
     width: 120%;
     height: 120%;
     margin: -10%;
-    pointer-events: none;
   }
   .slot .gear .part {
     transform: rotate(22.5deg);
@@ -201,30 +235,13 @@
   .flipped {
     transform: scaleX(-1);
   }
-  .ramp .wrapper {
-    transition: transform 0.2s ease-in;
-  }
-  .down {
-    transition: transform 0.2s ease-in;
-    transform: rotate(-90deg);
-    transition-delay: 0.05s;
-  }
-
-  .crossover .down, .interceptor .down {
-    transform: none;
-  }
-  .ramp.right .down, .bit.right .down {
-    transition-delay: 0.1s;
-  }
+  
   .marble {
     position: absolute;
     top: 10%;
     left: 10%;
     transform: translate(-50%, -50%);
     animation-duration: 0.3s;
-  }
-
-  .marble {
     width: 1.44vh;
     height: 1.44vh;
     z-index: 1;
@@ -242,35 +259,83 @@
     }
   }
 
+  /*Component Animations*/
 
+  .ramp .wrapper {
+    transition: transform 0.2s ease-in;
+  }
+  .down {
+    transition: transform 0.2s ease-in;
+    transform: rotate(-90deg);
+    transition-delay: 0.05s;
+  }
+
+  .down.reset {
+    transition-property: none;
+    transform: none;
+  }
+
+  .crossover .down, .interceptor .down {
+    transform: none;
+  }
+  .ramp.right .down, .bit.right .down {
+    transition-delay: 0.1s;
+  }
 
   @keyframes ramp {
     0% {top: -10%; left: 0;}
     30% {top: 20%; left: 20%;}
     90% {top: 20%; left: 20%;}
-    100% {top: -10%; left: -10%;}
+    100% {top: 0%; left: 5%;}
   }
 
   @keyframes rampright {
     0% {top: -10%; left: 100%;}
-    30% {top: 20%; left: 20%;}
-    90% {top: 20%; left: 20%;}
-    100% {top: -10%; left: -10%;}
+    50% {top: 20%; left: 20%;}
+    93% {top: 20%; left: 20%;}
+    100% {top: 0%; left: 5%;}
+  }
+
+  .ramp .marble, .bit .marble {
+    animation-name: ramp;
+    top: -10%;
+    left: -10%;
+  }
+
+  .ramp.right .marble {
+    animation-name: rampright;
+    animation-duration: 0.4s
+  }
+
+  .ramp.right, .bit.right {
+    transition-delay: 0.15s
   }
 
   @keyframes bit {
     0% {top: -10%; left: 0;}
     30% {top: 38%; left: 20%;}
     85% {top: 38%; left: 20%;}
-    100% {top: -10%; left: -10%;}
+    100% {top: 0%; left: 5%;}
   }
 
   @keyframes bitright {
     0% {top: -10%; left: 100%;}
     20% {top: 0; left: 60%;}
-    30% {top: 38%; left: 20%;}
+    50% {top: 38%; left: 20%;}
     90% {top: 38%; left: 20%;}
-    100% {top: -10%; left: -10%;}
+    100% {top: 0%; left: 5%;}
+  }
+
+
+  .bit .marble, .gearbit .marble {
+    animation-name: bit;
+    top: -10%;
+    left: -10%;
+  }
+
+  .bit.right .marble, .gearbit.right .marble {
+    animation-name: bitright;
+    animation-duration: 0.4s
   }
 
   @keyframes crossover {
@@ -295,6 +360,18 @@
     100% {left: 0;}
   }
 
+  .crossover .marble {
+    animation-name: crossover;
+    top: 85%;
+    left: 100%;
+  }
+
+  .crossover.right .marble {
+    animation-name: crossoverright;
+    top: 85%;
+    left: 0;
+  }
+
   @keyframes interceptor {
     0% {top: -10%; left: 0;}
     10% {top: 10%; left: 10%;}
@@ -311,26 +388,6 @@
     100% {left: 50%;}
   }
 
-  .ramp .marble, .bit .marble {
-    animation-name: ramp;
-    top: -10%;
-    left: -10%;
-  }
-
-  .ramp.right .marble, .bit.right .marble {
-    animation-name: rampright;
-  }
-
-  .bit .marble, .gearbit .marble {
-    animation-name: bit;
-    top: -10%;
-    left: -10%;
-  }
-
-  .bit.right .marble, .gearbit.right .marble {
-    animation-name: bitright;
-  }
-
   .interceptor .marble {
     animation-name: interceptor;
     top: 25%;
@@ -340,15 +397,54 @@
     animation-name: interceptorright;
   }
 
-  .crossover .marble {
-    animation-name: crossover;
-    top: 85%;
-    left: 100%;
+  
+
+  
+
+  #results-tray {
+    display: flex;
+    justify-content: right;
+    align-content: center;
   }
 
-  .crossover.right .marble {
-    animation-name: crossoverright;
-    top: 85%;
-    left: 0;
+  #levers {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  #start-ramps {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .marble-start {
+    position: relative;
+    width: 18vh;
+    height: 6vh;
+    overflow: visible;
+    background-image: url(/images/bg-start.svg);
+    background-repeat: none;
+    background-size: cover;
+  }
+
+  @media (max-aspect-ratio: 7/9) {
+    .marble-start {
+      width: 24vw;
+      height: 8vw;
+    }
+
+  }
+
+  .marble-start .marble {
+    animation-name: marblestart;
+    animation-duration: 0.4s;
+    animation-timing-function: ease-in;
+    top: 90%;
+    left: 106%;
+  }
+
+  @keyframes marblestart {
+    0% {top: 0%; left: 0%;}
+    100% {top: 90%; left: 106%;}
   }
 </style>

@@ -5,7 +5,13 @@ const http = require('http').createServer(app);
 
 const io = require('socket.io')(http);
 
-app.use(express.static('public'));
+app.use(express.static('public', {
+  etag: false,
+  lastModified: false,
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+  },
+}));
 
 app.get('/room/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
