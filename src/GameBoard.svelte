@@ -1,13 +1,19 @@
 <script>
   import Board from './boardUtils.js';
   import MarbleTray from './MarbleTray.svelte';
-  import {BlueMarble, RedMarble} from './marbles.js';
   import {createEventDispatcher, tick} from 'svelte';
 
   export let board = Board.create();
   export let holding;
   export let lastGrab;
   export let boardElement;
+  export let marbles;
+  export let socket;
+
+  if (socket) socket.on('run', (side) => {
+    triggerLever(side);
+    console.log('run');
+  });
 
   const dispatch = createEventDispatcher();
 
@@ -17,38 +23,22 @@
         !holding && !board.marble && board[y][x]) {
       e.preventDefault();
       e.stopPropagation();
-      console.log(`Grabbed ${board[y][x].name}`);
-      holding = board[y][x];
-      board[y][x] = false;
-      lastGrab = {x, y, timeout: setTimeout(() => lastGrab = {x: false, y: false, timeout: false}, 300)};
-      dispatch('grab');
+      if (!board[y][x].locked) {
+        console.log(`Grabbed ${board[y][x].name}`);
+        holding = board[y][x];
+        board[y][x] = false;
+        lastGrab = {x, y, timeout: setTimeout(() => lastGrab = {x: false, y: false, timeout: false}, 300)};
+        dispatch('grab');
+      }else if (board[y][x].flipsOnMarble) {
+        board.flip(x, y);
+        board = board;
+        console.log(`Flipped ${board[y][x].name}`);
+        dispatch('send');
+      }
     }
   }
-
-  let marbles = {numbers: {left: 8, right: 8}};
-  const urlParams = new URLSearchParams(window.location.search);
-  Object.keys(marbles.numbers).forEach(side => {
-    if (urlParams.has(side) && parseInt(urlParams.get(side)) != NaN)
-      marbles.numbers[side] = Math.min(20, Math.max(0, parseInt(urlParams.get(side))));
-    else marbles.numbers[side] = 8;
-  });
 
   let marbleElement;
-
-  resetMarbles();
-
-  function resetMarbles() {
-    if (board.marble) {
-      board.marble = false;
-    }
-    marbles.results = [];
-    marbles.left = [...Array(marbles.numbers.left)].map(i => new BlueMarble());
-    marbles.right = [...Array(marbles.numbers.right)].map(i => new RedMarble());
-    marbles = marbles;
-    board.position = false;
-    board = board;
-  }
-
   let reset = false;
 
   function triggerLever(side='left') {
@@ -70,7 +60,8 @@
           triggerLever(result.side);
           marbles = marbles;
         }
-      }).catch(resetMarbles);
+      }).catch(() => marbles.reset());
+      marbles = marbles;
     }
   }
 
@@ -87,6 +78,21 @@
   function marbleDirection(x, y) {
     return hasMarble(x, y) &&
       (Math.floor((board.direction +1) / 2) === board.at(x, y).facing);
+  }
+
+  function triggerLeft() {
+    if (socket) socket.emit('run', 'left');
+    triggerLever('left');
+  }
+
+  function triggerRight() {
+    if (socket) socket.emit('run', 'right');
+    triggerLever('right');
+  }
+
+  function resetMarbles() {
+    dispatch('send');
+    marbles.reset();
   }
 
 </script>
@@ -124,14 +130,14 @@
     <div class="row">
       {#each row as part, x (x)}
         {#if board.isValid(x, y)}
-        <div class:occupied={part} class:slot="{board.hasSlot(x, y)}" class="position"
+        <div class:occupied="{part && !part.locked}" class:slot="{board.hasSlot(x, y)}" class="position"
             on:mousedown="{e => grab(e, x, y)}"
             on:touchstart="{e => grab(e, x, y)}">
           {#if part}
           <div class:flipped={part.facing} class={part.name} class:right="{marbleDirection(x, y)}" >
             <div class="wrapper" class:down="{isMoving(x, y)}"
                 class:reset>
-              <img class="part" src="/images/{part.name}.svg" alt={part.name}>
+              <img class="part" class:locked={part.locked} src="/images/{part.name}.svg" alt={part.name}>
               {#if hasMarble(x, y)}
                 <img bind:this={marbleElement} class="marble" src="/images/marble{board.marble.color}.svg" alt="">
               {/if}
@@ -147,12 +153,12 @@
     {/each}
   </div>
   <div id="levers">
-    <button on:click="{() => triggerLever('left')}">Trigger Left</button>
-    <button on:click="{() => triggerLever('right')}">Trigger Right</button>
+    <button on:click={triggerLeft} disabled={board.marble}>Trigger Left</button>
+    <button on:click={triggerRight} disabled={board.marble}>Trigger Right</button>
   </div>
   <div id="results-tray">
     <MarbleTray result={true} direction="right" marbles={marbles.results}/>
-    <button on:click="{resetMarbles}">Reset</button>
+    <button on:click={resetMarbles} disabled="{!board.marble && !marbles.results.length}">Reset</button>
   </div>
 </div>
 
@@ -234,6 +240,12 @@
   }
   .flipped {
     transform: scaleX(-1);
+  }
+  .locked {
+    filter: grayscale(75%);
+  }
+  .interceptor .locked {
+    filter: brightness(150%);
   }
   
   .marble {

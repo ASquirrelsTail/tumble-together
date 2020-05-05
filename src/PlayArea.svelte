@@ -3,35 +3,85 @@
   import PartsTray from  './PartsTray.svelte';
   import Hand from './Hand.svelte';
   import ShareURL from './ShareURL.svelte';
+  import {urlEncode64} from './constants.js';
   import components from './components.js';
+  import {BlueMarble, RedMarble} from './marbles.js';
   import Board from './boardUtils.js';
   import io from 'socket.io-client'
 
   let holding = false;
   let mousePosition = {};
+  let board;
   let boardElement;
 
-  let parts = Object.values(components);
+  function encode() {
+    return board.encode() + urlEncode64[63] + urlEncode64[marbles.numbers.left] + urlEncode64[marbles.numbers.right] + 
+      parts.filter(part => part.count < 20).map(part => urlEncode64[part.code[0]] + urlEncode64[part.count]).join('');
+  }
 
-  // For each part check the query string for the count, otherwise infinity.
+  function decode(code, send=false) {
+    board = Board.create(code);
+    board = board;
+
+    let partsCode = false;
+    if (code)
+      partsCode = code.split(urlEncode64[63]).length === 2 ? code.split(urlEncode64[63])[1] : false;
+
+    parts.forEach(part => {
+      if (partsCode) {
+        let marker = partsCode.indexOf(urlEncode64[part.code[0]]);
+        if (marker > 0 && marker + 1 < partsCode.length) part.count = urlEncode64.indexOf(partsCode[marker + 1]);
+        else part.count = Infinity;
+      } else part.count = Infinity;
+    });
+    parts = parts;
+
+    if (partsCode) {
+      let left = urlEncode64.indexOf(partsCode[0]);
+      let right = urlEncode64.indexOf(partsCode[1]);
+      if (left <= 20 && right <= 20) {
+        marbles.numbers.left = left;
+        marbles.numbers.right = right;
+      }
+    }
+    marbles.reset();
+    if (send) sendBoard();
+  }
+
+  
   const urlParams = new URLSearchParams(window.location.search);
-  parts.forEach(part => {
-    if (urlParams.has(part.name) && parseInt(urlParams.get(part.name)) != NaN)
-      part.count = Math.max(0, parseInt(urlParams.get(part.name)));
-    else part.count = Infinity;
-  });
 
   let socket = false;
   let code = false;
   if (window.location.pathname === '/room/') {
     socket = io.connect(window.location.origin);
   } else if (urlParams.has('code')) code = urlParams.get('code');
-  let board = Board.create(code);
 
-  if (socket) socket.on('board', (code) => board = Board.create(code));
+  let parts = Object.values(components);
+
+  let marbles = {
+    numbers: {left: 8, right: 8},
+    reset() {
+      if (board.marble) {
+        board.marble = false;
+      }
+      this.results = [];
+      this.left = [...Array(this.numbers.left)].map(i => new BlueMarble());
+      this.right = [...Array(this.numbers.right)].map(i => new RedMarble());
+      marbles = marbles;
+      board.position = false;
+      board = board;
+    }
+  };
+
+  decode(code);
+
+  if (socket) {
+    socket.on('board', decode);
+  }
 
   function sendBoard() {
-    if (socket) socket.emit('board', board.encode());
+    if (socket) socket.emit('board', encode());
   }
 
   function getBoardPosition(pageX, pageY) {
@@ -75,7 +125,6 @@
         console.log(`Placed ${holding.name}`);
         let flipableNeighbors = Array.from(board.flipableNeighbors(...boardPosition));
         if (flipableNeighbors.length > 1) holding.facing = flipableNeighbors[1].facing;
-        sendBoard();
       }else{
         parts.find(part => part.name === holding.name).count++;
         parts = parts;
@@ -83,6 +132,7 @@
       }
       if (lastGrab.timeout) window.clearTimeout(lastGrab.timeout)
       holding = false;
+      sendBoard();
       e.preventDefault();
       e.stopPropagation();
     }
@@ -95,13 +145,13 @@
     on:mouseup={drop}
     on:mouseleave="{e => drop(e, true)}"
     on:touchmove={touchMove}
-    on:touchend="{e => drop(e)}">
-  <GameBoard bind:boardElement={boardElement} bind:board={board} bind:holding={holding}
-    on:grab={sendBoard} bind:lastGrab={lastGrab}/>
-  <PartsTray bind:parts={parts} bind:holding={holding}/>
+    on:touchend={drop}>
+  <GameBoard bind:boardElement bind:board bind:marbles bind:holding
+    bind:lastGrab {socket} on:send={sendBoard}/>
+  <PartsTray bind:parts bind:holding/>
 </div>
 <Hand {holding} {mousePosition}/>
-<ShareURL {board} {parts} />
+<ShareURL generator={encode} />
 
 <style>
   #play-area {

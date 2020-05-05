@@ -4,9 +4,11 @@ import components from './components.js';
 export default class Board extends Array {
   constructor(boardArray) {
     super(...boardArray);
-    this.complete = () => false;
   }
   async startRun(marble, start='left', onTick=() => {}) {
+    // Advances a marble through the board from the given starting position.
+    // Calls onTick ever time the marble advances by a row.
+    // Returns object containing the marble, and the side it exited from.
     if (this.marble) return false;
     this.marble = marble;
     this.position = {x: start === 'left' ? 3 : 7, y: -1};
@@ -32,6 +34,7 @@ export default class Board extends Array {
     return false;
   }
   tick() {
+    // Advances the marble's position through the board, based on part at its current position.
     if (this.marble) {
       let result = false;
       let part = this[this.position.y][this.position.x]
@@ -51,6 +54,7 @@ export default class Board extends Array {
     }
   }
   at(x, y) {
+    // Returns contents of array at x and y.
     if ((x >= 0 && x < this[0].length) &&
         (y >= 0 && y < this.length))
       return this[y][x];
@@ -64,9 +68,11 @@ export default class Board extends Array {
     else return true;
   }
   hasSlot(x, y) {
+    // Returns true if a positon should have a slot (every other position).
     return Boolean((x + y) % 2) ;
   }
   flipableNeighbors(partX, partY) {
+    // Returns a set containing all contiguous parts that can be flipped by the part at x, y.
     let part = this.at(partX, partY);
     let partsToFlip = new Set();
     if (part) {
@@ -88,9 +94,11 @@ export default class Board extends Array {
     return partsToFlip;
   }
   flip(x, y) {
+    // Flips the part at x, y, and all contiguous parts that can be flipped.
     this.flipableNeighbors(x, y).forEach(part => part.flip());
   }
   encode() {
+    // Returns a base64 encoded version of the board.
     let encodedBoard = ''
 
     this.forEach(row => {
@@ -103,18 +111,25 @@ export default class Board extends Array {
           position += numberOfBlanks;
         } else {
           encodedBoard += urlEncode64[row[position].constructor.code[row[position].facing]];
+          if (row[position].locked) encodedBoard += urlEncode64[62];
         }
       }
     });
     return encodedBoard;
   }
   static create(boardCode=null) {
+    // Recreates a board from code if provided, else returns an empty board.
     let board = [...Array(11)];
     if (boardCode) {
       if (!/^[a-zA-Z0-9-_]*$/.test(boardCode)) throw 'Code is not base64 url encoded!'
       else if (boardCode.length < 11) throw 'Code is too short!'
       else{
         let position = 0;
+        let boardLocked = false;
+        if (urlEncode64.indexOf(boardCode[0]) == 62) {
+          boardLocked = true;
+          position = 1;
+        }
         const componentsList = Object.values(components)
         board = board.map(() => {
           let row = [];
@@ -123,8 +138,11 @@ export default class Board extends Array {
             if (code < 11) row.push(...Array(code + 1));
             else {
               let componentClass = componentsList.find(component => component.code.includes(code));
-              if (componentClass) row.push(new componentClass(componentClass.code.indexOf(code)));
-              else throw 'Invalid code!'
+              if (componentClass) {
+                let locked = (position + 1 < boardCode.length && boardCode[position + 1] === urlEncode64[62]);
+                row.push(new componentClass(componentClass.code.indexOf(code), boardLocked || locked));
+                if (locked) position++;
+              } else throw 'Invalid code! ' + code + ' @ position ' + position;
             }
             position++;
           }

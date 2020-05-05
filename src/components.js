@@ -1,7 +1,8 @@
 class Component {
   static requiresSlot = true;
-  constructor(facing=0) {
+  constructor(facing=0, locked=false) {
     this.facing = facing;
+    this.locked = locked;
   }
   flip() {
     this.facing = (this.facing + 1) % 2;
@@ -29,34 +30,33 @@ class Component {
 }
 
 class SymetricalComponent extends Component {
-  constructor() {
-    super();
-    this.facing = 0;
+  constructor(facing=0, locked=false) {
+    super(0, locked);
   }
   flip() {}
 }
 
 class Ramp extends Component {
   static name = 'ramp';
-  static code = [53, 54];
+  static code = [52, 53];
 }
 
 class Bit extends Component {
   static name = 'bit';
-  static code = [55, 56];
+  static code = [54, 55];
   static flipsOnMarble = true;
 }
 
 class GearBit extends Component {
   static name = 'gearbit';
-  static code = [57, 58];
+  static code = [56, 57];
   static flipsOnMarble = true;
   static flipsNeighbors = true;
 }
 
 class Crossover extends SymetricalComponent {
   static name = 'crossover';
-  static code = [59];
+  static code = [58];
   handleMarble(entry) {
     return entry;
   }
@@ -64,14 +64,14 @@ class Crossover extends SymetricalComponent {
 
 class Interceptor extends SymetricalComponent {
   static name = 'interceptor';
-  static code = [60];
+  static code = [59];
   static stopsMarble = true;
 }
 
 class Gear extends Component {
   static requiresSlot = false;
   static name = 'gear';
-  static code = [61, 62];
+  static code = [60, 61];
   static flipsNeighbors = true;
   static stopsMarble = true;
 }

@@ -1,16 +1,14 @@
 <script>
   import Board from './boardUtils.js';
 
-  export let board;
-  export let parts;
+  export let generator;
 
   let copyText;
 
   function copyToClipboard() {
-    let code = board.encode();
-    let query = parts.filter(part => part.count !== Infinity).map(part => `${part.name}=${part.count}`).join('&');
+    let code = generator();
 
-    let url = `${window.location.origin}${window.location.pathname}?code=${code}&${query}`;
+    let url = `${window.location.origin}${window.location.pathname}?code=${code}`;
 
     copyText.value = url;
 

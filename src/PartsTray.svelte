@@ -4,15 +4,17 @@
 
 
   function grab(e, part) {
-    if ((e.type === 'mousedown' && e.button === 0) ||
-        (e.type === 'touchstart' && e.touches.length === 1) && 
-        part.count && !holding) {
+    if (((e.type === 'mousedown' && e.button === 0) ||
+         (e.type === 'touchstart' && e.touches.length === 1)) && 
+         !holding) {
       e.preventDefault();
       e.stopPropagation();
-      console.log(`Grabbed ${part.name}`);
-      part.count -= 1;
-      parts = parts;
-      holding = new part();
+      if (part.count > 0) {
+        console.log(`Grabbed ${part.name}`);
+        part.count -= 1;
+        parts = parts;
+        holding = new part();
+      }
     }
   }
 </script>

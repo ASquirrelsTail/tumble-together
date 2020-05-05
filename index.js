@@ -17,13 +17,18 @@ app.get('/room/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-let board = 'aa-1-0---0-0-1-1-1-0----1-1-0-1-1-3-1-0---0-0aaaa'; // HI!
+let board = 'KB2E2BE2EB2HE2EB2HE2EB2HE2EKK_II2B6A7B4A8A';
+
+
 
 io.on('connection', (socket) => {
   socket.emit('board', board);
   socket.on('board', (updatedBoard) => {
     board = updatedBoard;
     socket.broadcast.emit('board', board);
+  });
+  socket.on('run', (side) => {
+    socket.broadcast.emit('run', side);
   });
 });
 
