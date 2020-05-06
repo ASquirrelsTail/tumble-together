@@ -2,7 +2,7 @@
   export let marbles = [];
   export let direction = 'left';
   export let result = false;
-  import { fade, fly } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
 </script>
 
 <div id="marble-tray" class:right="{direction==='right'}">

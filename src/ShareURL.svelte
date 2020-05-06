@@ -1,14 +1,14 @@
 <script>
   import Board from './boardUtils.js';
 
-  export let generator;
+  export let encode;
 
   let copyText;
 
   function copyToClipboard() {
-    let code = generator();
+    let code = encode();
 
-    let url = `${window.location.origin}${window.location.pathname}?code=${code}`;
+    let url = `${window.location.origin}${window.location.pathname !== '/room/' ? window.location.pathname : '/'}?code=${code}`;
 
     copyText.value = url;
 

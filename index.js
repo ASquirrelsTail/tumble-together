@@ -6,18 +6,18 @@ const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
 app.use(express.static('public', {
-  etag: false,
-  lastModified: false,
-  setHeaders: (res) => {
-    res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
-  },
+  setHeaders: (res, path) => {
+    if (path.endsWith('.html') || path.endsWith('.js')) {
+      res.setHeader('Cache-Control', 'no-cache');
+    }
+  }
 }));
 
 app.get('/room/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-let board = 'KB2E2BE2EB2HE2EB2HE2EB2HE2EKK_II2B6A7B4A8A';
+let board = 'KKKKKKKKKKK';
 
 
 

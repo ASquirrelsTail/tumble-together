@@ -28,7 +28,7 @@
         holding = board[y][x];
         board[y][x] = false;
         lastGrab = {x, y, timeout: setTimeout(() => lastGrab = {x: false, y: false, timeout: false}, 300)};
-        dispatch('grab');
+        dispatch('send');
       }else if (board[y][x].flipsOnMarble) {
         board.flip(x, y);
         board = board;

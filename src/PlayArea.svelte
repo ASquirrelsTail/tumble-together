@@ -2,12 +2,12 @@
   import GameBoard from './GameBoard.svelte';
   import PartsTray from  './PartsTray.svelte';
   import Hand from './Hand.svelte';
-  import ShareURL from './ShareURL.svelte';
   import {urlEncode64} from './constants.js';
   import components from './components.js';
   import {BlueMarble, RedMarble} from './marbles.js';
   import Board from './boardUtils.js';
   import io from 'socket.io-client'
+  import { createEventDispatcher, onMount } from 'svelte';
 
   let holding = false;
   let mousePosition = {};
@@ -36,6 +36,8 @@
     });
     parts = parts;
 
+    marbles.numbers = {left: 8, right: 8};
+
     if (partsCode) {
       let left = urlEncode64.indexOf(partsCode[0]);
       let right = urlEncode64.indexOf(partsCode[1]);
@@ -45,8 +47,17 @@
       }
     }
     marbles.reset();
-    if (send) sendBoard();
+    if (send && !sendBoard()) {
+      let url = window.location.pathname;
+      if (code) url += '?code=' + code;
+      history.pushState(null, document.title, url);
+    }
   }
+
+  const dispatch = createEventDispatcher();
+  onMount(() => {
+    dispatch('decoders', {encode, decode});
+  });
 
   
   const urlParams = new URLSearchParams(window.location.search);
@@ -81,7 +92,10 @@
   }
 
   function sendBoard() {
-    if (socket) socket.emit('board', encode());
+    if (socket) {
+      socket.emit('board', encode());
+      return true;
+    }else return false;
   }
 
   function getBoardPosition(pageX, pageY) {
@@ -124,7 +138,7 @@
         }
         console.log(`Placed ${holding.name}`);
         let flipableNeighbors = Array.from(board.flipableNeighbors(...boardPosition));
-        if (flipableNeighbors.length > 1) holding.facing = flipableNeighbors[1].facing;
+        if (flipableNeighbors.length > 1) flipableNeighbors.forEach(part => part.facing = flipableNeighbors[1].facing);
       }else{
         parts.find(part => part.name === holding.name).count++;
         parts = parts;
@@ -151,7 +165,6 @@
   <PartsTray bind:parts bind:holding/>
 </div>
 <Hand {holding} {mousePosition}/>
-<ShareURL generator={encode} />
 
 <style>
   #play-area {
