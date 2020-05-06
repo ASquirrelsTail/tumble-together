@@ -100,10 +100,10 @@
 
   function getBoardPosition(pageX, pageY) {
     let boardRect = boardElement.getBoundingClientRect();
-    let x = Math.floor((pageX - boardRect.left) / (boardRect.width / board[0].length));
-    let y = Math.floor((pageY - boardRect.top) / (boardRect.height / board.length));
-    if (pageX > boardRect.left && pageX < boardRect.right &&
-        pageY > boardRect.top && pageY < boardRect.bottom &&
+    let x = Math.floor((pageX - (boardRect.left + window.scrollX)) / (boardRect.width / board[0].length));
+    let y = Math.floor((pageY - (boardRect.top + window.scrollY)) / (boardRect.height / board.length));
+    if (pageX > (boardRect.left + window.scrollX) && pageX < (boardRect.right + window.scrollX) &&
+        pageY > (boardRect.top + window.scrollY) && pageY < (boardRect.bottom + window.scrollY) &&
         board.isValid(x, y)) return [x, y];
     else return false;
   }
