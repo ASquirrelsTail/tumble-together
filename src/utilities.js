@@ -14,6 +14,7 @@ if (window.location.pathname.endsWith('/room/')) {
   // Otherwise check for a code in the URL and decode it.
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has('code')) decode(urlParams.get('code'));
+  else decode();
 }
 
 export function sendBoard() {

@@ -41,7 +41,6 @@
 
   function closeMenu() {
     visible = false;
-    showChallenges = false;
   }
 
   function showAboutModal() {
