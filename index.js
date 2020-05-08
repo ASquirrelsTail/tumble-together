@@ -17,6 +17,10 @@ app.get('/room/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
+app.get('/about/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
 let board = 'KKKKKKKKKKK';
 
 

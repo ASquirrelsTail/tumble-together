@@ -172,6 +172,8 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    width: 92%;
+    margin: auto;
   }
   @media (max-aspect-ratio: 7/9) {
     #play-area {

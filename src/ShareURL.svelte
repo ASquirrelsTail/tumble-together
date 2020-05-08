@@ -8,14 +8,23 @@
   function copyToClipboard() {
     let code = encode();
 
-    let url = `${window.location.origin}${window.location.pathname !== '/room/' ? window.location.pathname : '/'}?code=${code}`;
+    let pathname = window.location.pathname;
+
+    if (pathname.endsWith('room/')) pathname = pathname.slice(0, - 'room/'.length);
+    if (pathname.endsWith('about/')) pathname = pathname.slice(0, - 'about/'.length);
+
+    let url = `${window.location.origin}${pathname}?code=${code}`;
 
     copyText.value = url;
+
+    copyText.style.display = 'inline-block';
 
     copyText.select();
     copyText.setSelectionRange(0, 99999);
 
     document.execCommand('copy');
+
+    copyText.style.display = '';
 
   }
 </script>
@@ -27,10 +36,14 @@
 
 <style>
   #copy-text {
-    /*display: none;*/
+    display: none;
     width: 1px;
     height: 1px;
     pointer-events: none;
     opacity: 0;
+  }
+
+  button {
+    width: 100%;
   }
 </style>
