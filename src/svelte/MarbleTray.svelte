@@ -1,8 +1,9 @@
 <script>
+  import { fly } from 'svelte/transition';
+
   export let marbles = [];
   export let direction = 'left';
   export let result = false;
-  import { fly } from 'svelte/transition';
 </script>
 
 <div id="marble-tray" class:right="{direction==='right'}">
@@ -45,9 +46,4 @@
       height: 1.92vw;
     }
   }
-
-  /*#marble-tray img {
-    transform: rotate(-5deg);
-    margin-bottom: -3px;
-  }*/
 </style>

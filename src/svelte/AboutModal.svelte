@@ -14,6 +14,7 @@
   if (window.location.pathname.endsWith(path)) visible = true;
 
   function openModal() {
+    // Open modal and set current location to About.
     oldPath = window.location.pathname;
     oldQuery = window.location.search;
     oldTitle = document.title;
@@ -23,11 +24,15 @@
     if (oldPath.endsWith('room/')) pathname = oldPath.slice(0, - 'room/'.length);
     if (oldPath.endsWith(path)) oldPath = oldPath.slice(0, - path.length);
     pathname += path;
-    history.pushState(null, 'Tumble Together - About', pathname);
+
+    document.title = 'Tumble Together - About';
+    history.pushState(null, document.title, pathname);
   }
 
   function closeModal() {
+    // Reset current location to the old URL
     visible = false;
+    document.title = oldTitle;
     history.pushState(null, oldTitle, oldPath + oldQuery);
   }
 </script>

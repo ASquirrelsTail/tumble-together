@@ -34,6 +34,9 @@ io.on('connection', (socket) => {
   socket.on('run', (side) => {
     socket.broadcast.emit('run', side);
   });
+  socket.on('challenge', (id) => {
+    socket.broadcast.emit('challenge', id);
+  });
 });
 
 http.listen(port, () => console.log(`Tumble Together listening at http://localhost:${port}`));

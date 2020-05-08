@@ -3,20 +3,16 @@
   import Menu from './Menu.svelte';
   import AboutModal from './AboutModal.svelte';
 
-  let encode;
-  let decode;
-
   let aboutModal = false;
-
 
 </script>
 
 
 <nav>
   <h1>Tumble Together!</h1>
-  <Menu {encode} {decode} on:aboutModal="{() => aboutModal = true}"/>
+  <Menu on:aboutModal="{() => aboutModal = true}"/>
 </nav>
-<PlayArea on:decoders="{(e) => {encode = e.detail.encode; decode = e.detail.decode}}"/>
+<PlayArea />
 
 <AboutModal bind:visible={aboutModal} />
 

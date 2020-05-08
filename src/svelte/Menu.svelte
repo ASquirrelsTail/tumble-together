@@ -1,16 +1,39 @@
 <script>
-  import challenges from './challenges.js';
   import { fade, fly, slide } from 'svelte/transition';
-  import ShareURL from './ShareURL.svelte';
   import {createEventDispatcher} from 'svelte';
-
-  export let encode = () => {};
-  export let decode = () => {};
+  import ShareURL from './ShareURL.svelte';
+  import challenges from '../challenges.js';
+  import { currentChallenge } from '../store.js'
+  import { decode, socket } from '../utilities.js';
 
   const dispatch = createEventDispatcher();
 
-  function setUpBoard(code) {
-    decode(code, true);
+  if (socket) socket.on('challenge', id => {
+    // If the challenge is changed by another player, updates the current challenge and title.
+    if (id && id < challenges.length) {
+      $currentChallenge = challenges[id];
+      document.title = 'Tumble Together - ' + $currentChallenge.name;
+    } else {
+      $currentChallenge = false;
+      document.title = 'Tumble Together';
+    }
+  });
+
+  function setUpBoard(newChallenge, id) {
+    // Loads selected challenge, updates the title, and sends the challenge Id to other players if sockets.io is connected.
+    if (newChallenge) {
+      decode(newChallenge.code, true);
+      $currentChallenge = newChallenge;
+      document.title = 'Tumble Together - ' + $currentChallenge.name;
+      if (socket) socket.emit('challenge', id);
+    }
+    else {
+      decode(false, true);
+      $currentChallenge = false;
+      document.title = 'Tumble Together';
+      if (socket) socket.emit('challenge', false);
+    }
+    closeMenu();
   }
 
   let visible = false;
@@ -39,15 +62,15 @@
   <button on:click="{() => showChallenges = !showChallenges}">Challenges <span class:up={showChallenges} class="arrow">&gt;</span></button>
   {#if showChallenges}
   <ol transition:slide id="challenges">
-    {#each challenges as challenge}
+    {#each challenges as challenge, challengeId (challengeId)}
     <li><a href="{window.location.origin + window.location.pathname + '?code=' + challenge.code}"
-        on:click|preventDefault="{() => setUpBoard(challenge.code)}">
+        on:click|preventDefault="{() => setUpBoard(challenge, challengeId)}">
       {challenge.name}
     </a></li>
     {/each}
   </ol>
   {/if}
-  <ShareURL {encode} />
+  <ShareURL />
   <a class="btn" href="/about.html" on:click|preventDefault={showAboutModal}>About</a>
 </div>
 {/if}

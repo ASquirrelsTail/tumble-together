@@ -1,3 +1,6 @@
+import { writable, get } from 'svelte/store';
+import { urlEncode64 } from './constants.js';
+
 class Component {
   static requiresSlot = true;
   constructor(facing=0, locked=false) {
@@ -8,8 +11,8 @@ class Component {
     this.facing = (this.facing + 1) % 2;
   }
   handleMarble(entry) {
-    const exit = (this.facing * 2) - 1;
-    return exit;
+    // Determines the direction the marble will leave a component given it's direction of entry.
+    return (this.facing * 2) - 1;
   }
   get name() {
     return this.constructor.name;
@@ -76,4 +79,29 @@ class Gear extends Component {
   static stopsMarble = true;
 }
 
-export default {Ramp, Bit, Crossover, Interceptor, GearBit, Gear};
+export const partsList = [Ramp, Bit, Crossover, Interceptor, GearBit, Gear]
+
+// Svelte store for parts
+export const parts = writable(partsList);
+parts.encode = function() {
+  // URL encode the parts list as a string of identifying part codes followed by their count.
+  let $parts = get(this);
+  return $parts.filter(part => typeof part.count !== "undefined" && part.count >= 0 && part.count < 20)
+               .map(part => urlEncode64[part.code[0]] + urlEncode64[part.count])
+               .join('');
+}
+
+parts.decode = function (code) {
+  // Decodes URL encoded string containing part code/count pairs.
+  this.update($parts => {
+    $parts.forEach(part => {
+      if (code) {
+        let marker = code.indexOf(urlEncode64[part.code[0]]);
+        if (marker > 0 && marker + 1 < code.length) part.count = urlEncode64.indexOf(code[marker + 1]);
+        else part.count = Infinity;
+      } else part.count = Infinity;
+    });
+
+    return $parts;
+  });
+}

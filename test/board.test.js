@@ -1,4 +1,4 @@
-import Board from '../src/boardUtils.js';
+import Board from '../src/board.js';
 
 describe('Board.create()', () => {
     it('should return an empty 11x11 array', () => {

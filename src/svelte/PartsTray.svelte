@@ -1,26 +1,25 @@
 <script>
-  export let parts = [];
-  export let holding;
-
+  import { holding } from '../store.js';
+  import { parts } from '../parts.js';
 
   function grab(e, part) {
     if (((e.type === 'mousedown' && e.button === 0) ||
          (e.type === 'touchstart' && e.touches.length === 1)) && 
-         !holding) {
+         !$holding) {
       e.preventDefault();
       e.stopPropagation();
       if (part.count > 0) {
         console.log(`Grabbed ${part.name}`);
         part.count -= 1;
-        parts = parts;
-        holding = new part();
+        $parts = $parts;
+        $holding = new part();
       }
     }
   }
 </script>
 
 <div id="parts-tray">
-  {#each parts as part}
+  {#each $parts as part}
   <div class="part" class:unavailable={!part.count}
       on:mousedown="{e => grab(e, part)}"
       on:touchstart="{e => grab(e, part)}">

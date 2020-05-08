@@ -1,7 +1,5 @@
 <script>
-  import Board from './boardUtils.js';
-
-  export let encode;
+  import { encode } from '../utilities.js';
 
   let copyText;
 

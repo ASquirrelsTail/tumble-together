@@ -1,5 +1,6 @@
-import {urlEncode64} from './constants.js';
-import components from './components.js';
+import { writable, get } from 'svelte/store';
+import { urlEncode64 } from './constants.js';
+import { partsList } from './parts.js';
 
 export default class Board extends Array {
   constructor(boardArray) {
@@ -7,7 +8,7 @@ export default class Board extends Array {
   }
   async startRun(marble, start='left', onTick=() => {}) {
     // Advances a marble through the board from the given starting position.
-    // Calls onTick ever time the marble advances by a row.
+    // Calls onTick every time the marble advances by a row.
     // Returns object containing the marble, and the side it exited from.
     if (this.marble) return false;
     this.marble = marble;
@@ -105,7 +106,7 @@ export default class Board extends Array {
       for (let position=0; position < row.length; position++) {
         if (!row[position]) {
           let restOfRow = row.slice(position + 1)
-          let numberOfBlanks = restOfRow.findIndex(component => component);
+          let numberOfBlanks = restOfRow.findIndex(part => part);
           if (numberOfBlanks < 0) numberOfBlanks = restOfRow.length;
           encodedBoard += urlEncode64[numberOfBlanks];
           position += numberOfBlanks;
@@ -130,17 +131,16 @@ export default class Board extends Array {
           boardLocked = true;
           position = 1;
         }
-        const componentsList = Object.values(components)
         board = board.map(() => {
           let row = [];
           while (row.length < 11 && position < boardCode.length) {
             let code = urlEncode64.indexOf(boardCode[position]);
             if (code < 11) row.push(...Array(code + 1));
             else {
-              let componentClass = componentsList.find(component => component.code.includes(code));
-              if (componentClass) {
+              let partClass = partsList.find(part => part.code.includes(code));
+              if (partClass) {
                 let locked = (position + 1 < boardCode.length && boardCode[position + 1] === urlEncode64[62]);
-                row.push(new componentClass(componentClass.code.indexOf(code), boardLocked || locked));
+                row.push(new partClass(partClass.code.indexOf(code), boardLocked || locked));
                 if (locked) position++;
               } else throw 'Invalid code! ' + code + ' @ position ' + position;
             }
@@ -154,4 +154,11 @@ export default class Board extends Array {
   }
 }
 
-
+// Svelte store for board data, with encode and decode shortcuts.
+export const board = writable(Board.create());
+board.encode = function () {
+  return get(this).encode();
+}
+board.decode = function (code) {
+  this.set(Board.create(code));
+}
