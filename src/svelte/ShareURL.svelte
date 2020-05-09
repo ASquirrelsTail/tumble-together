@@ -1,5 +1,6 @@
 <script>
   import { encode } from '../utilities.js';
+  import { currentChallenge } from '../store.js';
 
   let copyText;
 
@@ -11,7 +12,9 @@
     if (pathname.endsWith('room/')) pathname = pathname.slice(0, - 'room/'.length);
     if (pathname.endsWith('about/')) pathname = pathname.slice(0, - 'about/'.length);
 
-    let url = `${window.location.origin}${pathname}?code=${code}`;
+    let challengeId = $currentChallenge ? '&id=' + $currentChallenge.id : '';
+
+    let url = `${window.location.origin}${pathname}?code=${code}${challengeId}`;
 
     copyText.value = url;
 

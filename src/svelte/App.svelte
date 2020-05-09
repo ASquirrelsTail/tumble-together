@@ -2,20 +2,30 @@
 	import PlayArea from './PlayArea.svelte';
   import Menu from './Menu.svelte';
   import AboutModal from './AboutModal.svelte';
+  import InstructionModal from './InstructionModal.svelte';
   import { socket } from '../socket.js';
 
   let aboutModal = false;
+  let instructionModal = false;
 
 </script>
 
 
 <nav>
   <h1>Tumble Together! {#if $socket} <span>- Sharing</span>{/if}</h1>
-  <Menu on:aboutModal="{() => aboutModal = true}"/>
+  <div>
+    <button id="instructions-button" on:click="{() => instructionModal = true}">
+      <span class="title">Instructions </span>
+      <span class="question">?</span>
+    </button>
+    <Menu on:aboutModal="{() => aboutModal = true}"
+      on:instructionModal="{() => instructionModal = true}"/>
+  </div>
 </nav>
 <PlayArea />
 
 <AboutModal bind:visible={aboutModal} />
+<InstructionModal bind:visible={instructionModal} on:aboutModal="{() => aboutModal = true}"/>
 
 <style>
   nav {
@@ -45,7 +55,24 @@
     vertical-align: middle;
   }
 
-  main {
-    display: none;
+  #instructions-button {
+    margin-bottom: 0;
+    margin-right: 1rem;
+  }
+
+  #instructions-button .question {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    text-align: center;
+  }
+  @media (max-width: 576px) {
+    #instructions-button {
+      margin-bottom: 0;
+      margin-right: 0.2rem;
+    }
+    #instructions-button .title {
+      display: none;
+    }
   }
 </style>

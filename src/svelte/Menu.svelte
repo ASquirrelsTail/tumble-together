@@ -3,7 +3,7 @@
   import {createEventDispatcher, onMount} from 'svelte';
   import ShareURL from './ShareURL.svelte';
   import challenges from '../challenges.js';
-  import { currentChallenge } from '../store.js'
+  import { currentChallenge, rooms} from '../store.js'
   import { socket } from '../socket.js';
   import { decode, encode } from '../utilities.js';
 
@@ -14,22 +14,30 @@
       if (id && id < challenges.length) {
         $currentChallenge = challenges[id];
         document.title = 'Tumble Together - ' + $currentChallenge.name;
+        dispatch('instructionModal');
       } else {
         $currentChallenge = false;
         document.title = 'Tumble Together';
       }
     });
 
-  let rooms = false;
   const urlParams = new URLSearchParams(window.location.search);
   if (window.location.pathname.endsWith('room/')) {
     socket.connect(urlParams.get('uuid'));
-    rooms = true;
+    $rooms = true;
   } else {
     decode(urlParams.get('code'));
     onMount(() => {
+      let newId = urlParams.has('id') ? urlParams.get('id') - 1 : false;
+      if (newId && newId < challenges.length) {
+        $currentChallenge = challenges[newId];
+        document.title = 'Tumble Together - ' + $currentChallenge.name;
+        dispatch('instructionModal');
+        console.log('dipatched');
+      }
+      
       fetch('/room/', {method: 'HEAD'}).then((response) => {
-        rooms = response.ok;
+        $rooms = response.ok;
       });
     });
   }
@@ -57,6 +65,7 @@
       $currentChallenge = newChallenge;
       document.title = 'Tumble Together - ' + $currentChallenge.name;
       if ($socket) $socket.emit('challenge', id);
+      dispatch('instructionModal');
     }
     else {
       $currentChallenge = false;
@@ -66,7 +75,7 @@
     decode(code);
     if (!socket.sendBoard()) {
       let url = window.location.pathname;
-      if (code) url += '?code=' + code;
+      if (code) url += '?code=' + code + '&id=' + (id + 1);
       history.pushState(null, document.title, url);
     }
     closeMenu();
@@ -94,7 +103,7 @@
 <div transition:fade id="cover" on:click={closeMenu}></div>
 <div transition:fly="{{ x: -300, duration: 600 }}" id="menu">
   <button on:click|preventDefault="{() => setUpBoard()}">Clear Board</button>
-  {#if rooms}
+  {#if $rooms}
     {#if !$socket}
     <a class="btn" href="/room/" on:click|preventDefault={startNewRoom}>Start Shared Room</a>
     {:else}
