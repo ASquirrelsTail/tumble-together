@@ -55,3 +55,5 @@ marbles.decode = function (code) {
   } else this.reset(8, 8);
 }
 
+marbles.reset();
+

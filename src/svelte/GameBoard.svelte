@@ -4,15 +4,15 @@
   import { holding, currentChallenge } from '../store.js';
   import { board } from '../board.js';
   import { marbles } from '../marbles.js';
-  import { socket, sendBoard } from '../utilities.js';
+  import { socket } from '../socket.js';
 
   export let lastGrab;
   export let boardElement;
 
-  if (socket) socket.on('run', (side) => {
-    triggerLever(side);
-    console.log('run');
-  });
+  $: if ($socket) $socket.on('run', (side) => {
+      triggerLever(side);
+      console.log('run');
+    });
 
   function grab(e, x, y) {
     if (((e.type === 'mousedown' && e.button === 0) ||
@@ -25,12 +25,12 @@
         $holding = $board[y][x];
         $board[y][x] = false;
         lastGrab = {x, y, timeout: setTimeout(() => lastGrab = {x: false, y: false, timeout: false}, 300)};
-        sendBoard();
+        socket.sendBoard();
       }else if ($board[y][x].flipsOnMarble) {
         $board.flip(x, y);
         $board = $board;
         console.log(`Flipped ${$board[y][x].name}`);
-        sendBoard();
+        socket.sendBoard();
       }
     }
   }
@@ -86,18 +86,18 @@
   }
 
   function triggerLeft() {
-    if (socket) socket.emit('run', 'left');
+    if ($socket) $socket.emit('run', 'left');
     triggerLever('left');
   }
 
   function triggerRight() {
-    if (socket) socket.emit('run', 'right');
+    if ($socket) $socket.emit('run', 'right');
     triggerLever('right');
   }
 
   function resetMarbles() {
     marbles.reset();
-    sendBoard();
+    socket.sendBoard();
   }
 
 </script>

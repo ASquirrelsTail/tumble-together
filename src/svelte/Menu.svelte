@@ -4,42 +4,70 @@
   import ShareURL from './ShareURL.svelte';
   import challenges from '../challenges.js';
   import { currentChallenge } from '../store.js'
-  import { decode, socket } from '../utilities.js';
+  import { socket } from '../socket.js';
+  import { decode, encode } from '../utilities.js';
 
   const dispatch = createEventDispatcher();
 
-  if (socket) socket.on('challenge', id => {
-    // If the challenge is changed by another player, updates the current challenge and title.
-    if (id && id < challenges.length) {
-      $currentChallenge = challenges[id];
-      document.title = 'Tumble Together - ' + $currentChallenge.name;
-    } else {
-      $currentChallenge = false;
-      document.title = 'Tumble Together';
-    }
-  });
+  $: if ($socket) $socket.on('challenge', id => {
+      // If the challenge is changed by another player, updates the current challenge and title.
+      if (id && id < challenges.length) {
+        $currentChallenge = challenges[id];
+        document.title = 'Tumble Together - ' + $currentChallenge.name;
+      } else {
+        $currentChallenge = false;
+        document.title = 'Tumble Together';
+      }
+    });
 
   let rooms = false;
-  onMount(() => {
-    fetch('/room/', {method: 'HEAD'}).then((response) => {
-      rooms = response.ok;
+  const urlParams = new URLSearchParams(window.location.search);
+  if (window.location.pathname.endsWith('room/')) {
+    socket.connect(urlParams.get('uuid'));
+    rooms = true;
+  } else {
+    decode(urlParams.get('code'));
+    onMount(() => {
+      fetch('/room/', {method: 'HEAD'}).then((response) => {
+        rooms = response.ok;
+      });
     });
-  });
+  }
+
+  function startNewRoom() {
+    if (!$socket) socket.connect(false, encode());
+    if (!window.location.pathname.endsWith('room/'))
+      history.pushState(null, document.title, window.location.pathname + 'room/');
+    closeMenu();
+  }
+
+  function leaveRoom() {
+    if ($socket) socket.disconnect();
+    if (!window.location.pathname.endsWith('room/'))
+      history.pushState(null, document.title, window.location.pathname.slice(0, 'room/'.length));
+    closeMenu();
+  }
 
 
   function setUpBoard(newChallenge, id) {
     // Loads selected challenge, updates the title, and sends the challenge Id to other players if sockets.io is connected.
+    let code = false;
     if (newChallenge) {
-      decode(newChallenge.code, true);
+      code = newChallenge.code;
       $currentChallenge = newChallenge;
       document.title = 'Tumble Together - ' + $currentChallenge.name;
-      if (socket) socket.emit('challenge', id);
+      if ($socket) $socket.emit('challenge', id);
     }
     else {
-      decode(false, true);
       $currentChallenge = false;
       document.title = 'Tumble Together';
-      if (socket) socket.emit('challenge', false);
+      if ($socket) $socket.emit('challenge', false);
+    }
+    decode(code);
+    if (!socket.sendBoard()) {
+      let url = window.location.pathname;
+      if (code) url += '?code=' + code;
+      history.pushState(null, document.title, url);
     }
     closeMenu();
   }
@@ -67,7 +95,11 @@
 <div transition:fly="{{ x: -300, duration: 600 }}" id="menu">
   <button on:click|preventDefault="{() => setUpBoard()}">Clear Board</button>
   {#if rooms}
-  <a class="btn" href="/room/">Start Shared Room</a>
+    {#if !$socket}
+    <a class="btn" href="/room/" on:click|preventDefault={startNewRoom}>Start Shared Room</a>
+    {:else}
+    <a class="btn" href="/" on:click|preventDefault={leaveRoom}>Leave Shared Room</a>
+    {/if}
   {/if}
   <button on:click="{() => showChallenges = !showChallenges}">Challenges <span class:up={showChallenges} class="arrow">&gt;</span></button>
   {#if showChallenges}

@@ -7,7 +7,7 @@
   import { board } from '../board.js';
   import { marbles } from '../marbles.js';
   import { parts } from '../parts.js';
-  import { sendBoard } from '../utilities.js';
+  import { socket } from '../socket.js';
 
   let mousePosition = {};
   let lastGrab = {x: false, y: false, timeout: false};
@@ -63,7 +63,7 @@
       if (lastGrab.timeout) window.clearTimeout(lastGrab.timeout)
       $holding = false;
       $board = $board;
-      sendBoard();
+      socket.sendBoard();
       e.preventDefault();
       e.stopPropagation();
     }

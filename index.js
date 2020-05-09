@@ -5,7 +5,7 @@ const http = require('http').createServer(app);
 const uuid = require('uuid');
 const io = require('socket.io')(http);
 
-const maxRooms = process.env.MAX_ROOMS || 10;
+const maxRooms = process.env.MAX_ROOMS || 1;
 
 app.use(express.static('public', {
   setHeaders: (res, path) => {
