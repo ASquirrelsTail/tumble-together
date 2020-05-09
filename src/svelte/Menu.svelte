@@ -1,6 +1,6 @@
 <script>
   import { fade, fly, slide } from 'svelte/transition';
-  import {createEventDispatcher} from 'svelte';
+  import {createEventDispatcher, onMount} from 'svelte';
   import ShareURL from './ShareURL.svelte';
   import challenges from '../challenges.js';
   import { currentChallenge } from '../store.js'
@@ -18,6 +18,14 @@
       document.title = 'Tumble Together';
     }
   });
+
+  let rooms = false;
+  onMount(() => {
+    fetch('/room/', {method: 'HEAD'}).then((response) => {
+      rooms = response.ok;
+    });
+  });
+
 
   function setUpBoard(newChallenge, id) {
     // Loads selected challenge, updates the title, and sends the challenge Id to other players if sockets.io is connected.
@@ -58,6 +66,9 @@
 <div transition:fade id="cover" on:click={closeMenu}></div>
 <div transition:fly="{{ x: -300, duration: 600 }}" id="menu">
   <button on:click|preventDefault="{() => setUpBoard()}">Clear Board</button>
+  {#if rooms}
+  <a class="btn" href="/room/">Start Shared Room</a>
+  {/if}
   <button on:click="{() => showChallenges = !showChallenges}">Challenges <span class:up={showChallenges} class="arrow">&gt;</span></button>
   {#if showChallenges}
   <ol transition:slide id="challenges">
