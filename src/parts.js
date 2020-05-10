@@ -76,7 +76,9 @@ class Gear extends Component {
   static name = 'gear';
   static code = [60, 61];
   static flipsNeighbors = true;
-  static stopsMarble = true;
+  handleMarble(entry) {
+    return false;
+  }
 }
 
 export const partsList = [Ramp, Bit, Crossover, Interceptor, GearBit, Gear]

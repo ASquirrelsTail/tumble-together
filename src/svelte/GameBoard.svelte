@@ -37,6 +37,7 @@
 
   let marbleElement;
   let reset = false;
+  let triggerLock = false;
 
   function triggerLever(side='left') {
     if (!$board.marble && $marbles[side].length) {
@@ -63,21 +64,28 @@
       }).catch(() => {
         // If anything goes wrong, reset the board.
         // Need to add better feedback for dropped marbles.
-        marbles.reset()
+        if ($marbles.results.length === 0) {
+          marbles.reset();
+          triggerLock = false;
+        } else {
+          $board.marble = false;
+          triggerLock = true;
+        }
       });
       $marbles = $marbles;
     }
   }
 
-  function isMoving(x, y) {
-    // Determines if the part at x,y should be animating.
-    return ($board.position && ((x === $board.position.x && y === $board.position.y) ||
-      ($board.flipableNeighbors($board.position.x, $board.position.y).has($board.at(x, y)))))
-  }
-
   function hasMarble(x, y) {
     return ($board.marble && $board.position &&
       ((x === $board.position.x && y === $board.position.y)));
+  }
+
+  function isMoving(x, y) {
+    // Determines if the part at x,y should be animating.
+    return ((hasMarble(x, y) && ($board.at(x, y).name != 'gear')) ||
+      ($board.position && !hasMarble(x, y) &&
+        $board.flipableNeighbors($board.position.x, $board.position.y).has($board.at(x, y))))
   }
 
   function marbleDirection(x, y) {
@@ -97,6 +105,7 @@
 
   function resetMarbles() {
     marbles.reset();
+    triggerLock = false;
     socket.sendBoard();
   }
 
@@ -135,7 +144,8 @@
     <div class="row">
       {#each row as part, x (x)}
         {#if $board.isValid(x, y)}
-        <div class:occupied="{part && !part.locked}" class:slot="{$board.hasSlot(x, y)}" class="position"
+        <div class:occupied="{part && !part.locked}" class:empty={!part}
+            class:slot="{$board.hasSlot(x, y)}" class="position"
             on:mousedown="{e => grab(e, x, y)}"
             on:touchstart="{e => grab(e, x, y)}">
           {#if part}
@@ -148,10 +158,12 @@
               {/if}
             </div>
           </div>
+          {:else if hasMarble(x, y)}
+            <img bind:this={marbleElement} class="marble" class:right="{!Math.floor(($board.direction +1) / 2)}"src="/images/marble{$board.marble.color}.svg" alt="">
           {/if}
         </div>
         {:else}
-        <div class="position blank"></div>
+          <div class="position blank"></div>
         {/if}
       {/each}
     </div>
@@ -159,9 +171,9 @@
   </div>
   <div id="levers">
     <button on:click={triggerLeft}
-      disabled="{$board.marble || ($currentChallenge && $currentChallenge.trigger !== 'left')}">Trigger Left</button>
+      disabled="{$board.marble || triggerLock || ($currentChallenge && $currentChallenge.trigger !== 'left')}">Trigger Left</button>
     <button on:click={triggerRight}
-      disabled="{$board.marble || ($currentChallenge && $currentChallenge.trigger !== 'right')}">Trigger Right</button>
+      disabled="{$board.marble || triggerLock || ($currentChallenge && $currentChallenge.trigger !== 'right')}">Trigger Right</button>
   </div>
   <div id="results-tray">
     <MarbleTray result={true} direction="right" marbles={$marbles.results}/>
@@ -416,8 +428,39 @@
     animation-name: interceptorright;
   }
 
-  
+  .position.empty {
+    position: relative;
+  }
 
+  @keyframes empty {
+    0% {top: -10%; left: 0;}
+    10% {top: 0%; left: 10%;}
+    25% {top: 25%; left: 25%;}
+    35% {top: 50%; left: 35%;}
+    50% {top: 100%; left: 50%; opacity: 1;}
+    75% {top: 175%; left: 75%; opacity: 0.5;}
+    100% {top: 300%; left: 100%; opacity: 0;}
+  }
+
+  @keyframes emptyright {
+    0% {top: -10%; left: 100%;}
+    10% {top: 0%; left: 90%;}
+    25% {top: 25%; left: 75%;}
+    35% {top: 50%; left: 65%;}
+    50% {top: 100%; left: 50%; opacity: 1;}
+    75% {top: 175%; left: 25%; opacity: 0.5;}
+    100% {top: 300%; left: 00%; opacity: 0;}
+  }
+  
+  .position.empty .marble, .gear .marble {
+    animation-name: empty;
+    animation-duration: 0.3s;
+  }
+
+  .position.empty .marble.right, .gear.right .marble {
+    animation-name: emptyright;
+    animation-duration: 0.3s;
+  }
   
 
   #results-tray {
