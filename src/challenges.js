@@ -84,7 +84,7 @@ export default [
     name: 'Selectivity',
     code: '-KKE2EKKKA3A3A3A3A3AKKKK_CA0P2A6A7A4A8A',
     trigger: 'left',
-    objective: 'Flip bits 2 and 5 to the right.'
+    objective: 'Flip bits 2 and 5 to the right. See the puzzle book for further details.'
   },
   {
     id: 12,
@@ -105,14 +105,14 @@ export default [
     name: 'Duality - Part 3',
     code: '-KKE2EKKKKKE7EKK_II0U2A6A7A4A8A',
     trigger: 'left',
-    objective: 'If the machine starts with bit A pointing to the left, intercept a blue ball. Otherwise, intercept a red ball.'
+    objective: 'If the machine starts with bit A pointing to the left, intercept a blue ball. Otherwise, intercept a red ball. See the puzzle book for further details.'
   },
   {
     id: 15,
     name: 'Inversion',
     code: '-C2C0CD1A0DE7EKKKKKE2EKK_II0L2A6C7A4A8A',
     trigger: 'left',
-    objective: ' If bit A starts to the left, intercept a blue ball. If bit A starts to the right, intercept a red ball.'
+    objective: ' If bit A starts to the left, intercept a blue ball. If bit A starts to the right, intercept a red ball. See the puzzle book for further details.'
   },
   {
     id: 16,
@@ -135,7 +135,7 @@ export default [
     name: 'Entanglement',
     code: '-KKE2EKE2EKC7C7CKKKK_II0H2A6A7A4A8A',
     trigger: 'left',
-    objective: ' If the top bit AND the bottom bit start pointed to the right, put a ball in interceptor T. Otherwise put a ball in interceptor F.'
+    objective: ' If the top bit AND the bottom bit start pointed to the right, put a ball in interceptor T. Otherwise put a ball in interceptor F. See the puzzle book for further details.'
   },
   {
     id: 19,
@@ -156,14 +156,14 @@ export default [
     name: 'Quantum Number',
     code: '-C3GB1A1FC3GB1A1FC3GB1A1FC3GB1A1FC1GD1FK_II0F2A6A7A4A8A',
     trigger: 'left',
-    objective: ' Use register A to count the number of blue balls. (Use 15 or fewer balls.)'
+    objective: ' Use register A to count the number of blue balls. (Use 15 or fewer balls.) See the puzzle book for further details. See the puzzle book for further details.'
   },
   {
     id: 22,
     name: 'Depletion',
     code: '-C2GB0A0FC2GB0A0FC2GB0A0FC2GB0A0FC0GB0HK_II0E2A6A7A4A8A',
     trigger: 'left',
-    objective: 'Register A starts at 15. Subtract the number of blue balls from the register. (Use 15 or fewer balls.)'
+    objective: 'Register A starts at 15. Subtract the number of blue balls from the register. (Use 15 or fewer balls.) See the puzzle book for further details.'
   },
   {
     id: 23,
@@ -224,6 +224,6 @@ export default [
     name: 'Overflow',
     code: '-C3GKC3GKC3GB5HKKKKK_UA0O2A6A7A4B8B',
     trigger: 'left',
-    objective: 'Count the blue balls in register A. If there are more than 7, gear bit OV must flip right (and stay right) to indicate the overflow.'
+    objective: 'Count the blue balls in register A. If there are more than 7, gear bit OV must flip right (and stay right) to indicate the overflow. See the puzzle book for further details.'
   },
 ];
