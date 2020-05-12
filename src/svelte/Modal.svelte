@@ -42,7 +42,7 @@
   }
 
   .modal {
-    width: 60vw;
+    max-width: 60vw;
     max-height: 80vh;
     overflow-y: auto;
     background-color: white;
@@ -67,17 +67,18 @@
   .close-modal {
     width: 2em;
     height: 2em;
+    margin-left: 0.5rem;
   }
 
   @media (max-width: 576px) {
     .modal {
-      width: 95vw;
+      max-width: 95vw;
     }
   }
 
   @media (max-width: 768px) {
     .modal {
-      width: 80vw;
+      max-width: 80vw;
     }
   }
 </style>

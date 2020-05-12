@@ -19,7 +19,7 @@ class RedMarble extends Marble {
   static color = 'red';
 }
 
-export const marbles = writable({numbers: {left: 8, right: 8}});
+export const marbles = writable({numbers: {left: 8, right: 8}, edit: {}});
 marbles.reset = function (left, right) {
   // Removes marbles from the board, and refills the left and right marble trays.
   // Updates the number of marbles, if set.

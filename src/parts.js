@@ -88,7 +88,7 @@ export const parts = writable(partsList);
 parts.encode = function() {
   // URL encode the parts list as a string of identifying part codes followed by their count.
   let $parts = get(this);
-  return $parts.filter(part => typeof part.count !== "undefined" && part.count >= 0 && part.count < 40)
+  return $parts.filter(part => typeof part.count !== "undefined" && part.count >= 0 && part.count <= 50)
                .map(part => urlEncode64[part.code[0]] + urlEncode64[part.count])
                .join('');
 }

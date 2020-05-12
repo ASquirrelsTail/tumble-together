@@ -1,5 +1,6 @@
 <script>
   import MarbleTray from './MarbleTray.svelte';
+  import NumbersModal from './NumbersModal.svelte';
   import { tick } from 'svelte';
   import { holding, currentChallenge } from '../store.js';
   import { board } from '../board.js';
@@ -109,18 +110,30 @@
     socket.sendBoard();
   }
 
+  function editMarbleNumbers(side) {
+    $marbles.edit[side] = !$currentChallenge;
+    $marbles = $marbles;
+  }
+
+  function updateMarbleNumbers(side, number) {
+    const oldNumber = $marbles.numbers[side];
+    $marbles.numbers[side] = number;
+    $marbles = $marbles;
+    if (oldNumber != $marbles.numbers[side]) resetMarbles();
+  }
+
 </script>
 <div id="board-container">
   <div id="top-trays">
     <div class="container">
-      <div class="marble-numbers">
+      <div class="marble-numbers" on:click="{() => editMarbleNumbers('left')}">
         <img src="/images/marbleblue.svg" alt="{$marbles.numbers.left} Blue Marbles">
         x {$marbles.numbers.left}
       </div>
       <MarbleTray marbles={$marbles.left}/>
     </div>
     <div class="container">
-      <div class="marble-numbers">
+      <div class="marble-numbers" on:click="{() => editMarbleNumbers('right')}">
         <img src="/images/marblered.svg" alt="{$marbles.numbers.right} Red Marbles">
         x {$marbles.numbers.right}
       </div>
@@ -180,6 +193,19 @@
     <button on:click={resetMarbles} disabled="{!$board.marble && !$marbles.results.length}">Reset</button>
   </div>
 </div>
+
+<NumbersModal bind:visible={$marbles.edit.left} title="Number of Blue Marbles"
+    number={$marbles.numbers.left} infinity={false} max=20
+    on:update="{(e) => updateMarbleNumbers('left', e.detail)}">
+  <img class="modal-image" src="/images/marbleblue.svg" alt="Blue Marble">
+</NumbersModal>
+
+<NumbersModal bind:visible={$marbles.edit.right} title="Number of Red Marbles"
+    number={$marbles.numbers.right} infinity={false} max=20
+    on:update="{(e) => updateMarbleNumbers('right', e.detail)}">
+  <img class="modal-image" src="/images/marblered.svg" alt="Red Marble">
+</NumbersModal>
+
 
 <style>
   #board-container {
@@ -497,6 +523,11 @@
 
   }
 
+  @keyframes marblestart {
+    0% {top: 0%; left: 0%;}
+    100% {top: 90%; left: 106%;}
+  }
+
   .marble-start .marble {
     animation-name: marblestart;
     animation-duration: 0.4s;
@@ -505,8 +536,9 @@
     left: 106%;
   }
 
-  @keyframes marblestart {
-    0% {top: 0%; left: 0%;}
-    100% {top: 90%; left: 106%;}
+  .modal-image {
+    width: 40px;
+    height: 40px;
+    margin: 1rem;
   }
 </style>

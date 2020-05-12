@@ -35,9 +35,13 @@
       <h3>Instructions</h3>
       <p>Use the available parts to complete the challenge. Greyed-out parts cannot be moved, but greyed-out Bits and Gear Bits can be flipped by clicking/tapping on them. Press the {#if $currentChallenge.trigger}{$currentChallenge.trigger}{:else}either{/if} trigger to start the marbles rolling. Press the <span class="orbitron">Reset</span> button to put the marbles back and try again.</p>
     {/if}
-    <p>New parts can be dragged from the box and placed on the board. Most parts require a slot (or smile) to fit on the board, only the Red Gears can be placed on pegs without a slot. To flip a part simply tap/click on it once. To remove a part from drag it off the board.</p>
+    <p>New parts can be dragged from the box and placed on the board. Most parts require a slot (or smile) to fit on the board, only the Red Gears can be placed on pegs without a slot. To flip a part simply tap/click on it once. To remove a part from drag it off the board.
     {#if !$currentChallenge}
-      <p>To start the marbles rolling press the trigger on the side you would like to start with. To put the marbles back to the start, or end the run early, press the <span class="orbitron">Reset</span> button in the bottom right.</p>
+      You can set the number of available parts in the box by clicking or tapping the corresponding part.
+    {/if}
+    </p>
+    {#if !$currentChallenge}
+      <p>To start the marbles rolling press the trigger on the side you would like to start with. To put the marbles back to the start, or end the run early, press the <span class="orbitron">Reset</span> button in the bottom right. You can change the number of marbles by clicking/tapping the marbles at the top of the board.</p>
     {/if}
     <p>A collection of ready made challenges can be found in the <span class="orbitron">Menu <img src="/images/menu.svg" alt="Menu"></span> in the top right, as well as buttons to clear the board and copy the current board to a URL you can share with others.</p>
     {#if $rooms}

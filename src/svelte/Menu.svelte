@@ -159,6 +159,7 @@
     left: 0;
     height: 100vh;
     width: 300px;
+    max-width: 80%;
     padding: 0.5rem;
     z-index: 1001;
     background-color: white;

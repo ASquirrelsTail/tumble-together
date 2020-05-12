@@ -1,5 +1,6 @@
 <script>
-  import { holding } from '../store.js';
+  import NumbersModal from './NumbersModal.svelte';
+  import { holding, currentChallenge } from '../store.js';
   import { parts } from '../parts.js';
 
   function grab(e, part) {
@@ -11,10 +12,33 @@
       if (part.count > 0) {
         console.log(`Grabbed ${part.name}`);
         part.count -= 1;
-        $parts = $parts;
         $holding = new part();
       }
+      part.editTimer = setTimeout(() => part.editTimer = false, 600);
+      $parts = $parts;
     }
+  }
+
+  function edit(e, part) {
+    if (part.editTimer && ((e.type === 'mouseup' && e.button === 0) ||
+         (e.type === 'touchend' && e.changedTouches.length === 1 && e.touches.length === 0))) {
+      if (e.type === 'touchend') {
+        const targetArea = e.target.getBoundingClientRect();
+        const pageX = e.changedTouches[0].pageX;
+        const pageY = e.changedTouches[0].pageY;
+        if (pageX > (targetArea.left + window.scrollX) && pageX < (targetArea.right + window.scrollX) &&
+            pageY > (targetArea.top + window.scrollY) && pageY < (targetArea.bottom + window.scrollY))
+                part.editing = !$currentChallenge;
+      } else part.editing = !$currentChallenge;
+      clearTimeout(part.editTimer);
+      part.editTimer = false;
+      $parts = $parts;
+    }
+  }
+
+  function updatePartNumbers(part, number) {
+    part.count = number;
+    $parts = $parts;
   }
 </script>
 
@@ -22,7 +46,9 @@
   {#each $parts as part}
   <div class="part" class:unavailable={!part.count}
       on:mousedown="{e => grab(e, part)}"
-      on:touchstart="{e => grab(e, part)}">
+      on:touchstart="{e => grab(e, part)}"
+      on:mouseup="{e => edit(e, part)}"
+      on:touchend="{e => edit(e, part)}">
     <img src="/images/{part.name}.svg" alt={part.name}>
     <span class="count">x 
       {#if part.count != Infinity}
@@ -32,6 +58,10 @@
       {/if}
     </span>
   </div>
+  <NumbersModal bind:visible="{part.editing}" title="Number of {part.name}s"
+    number={part.count} on:update="{(e) => updatePartNumbers(part, e.detail)}">
+    <img class="modal-image" src="/images/{part.name}.svg" alt={part.name}>
+  </NumbersModal>
   {/each}
 </div>
 
@@ -74,6 +104,11 @@
     font-size: 2rem;
     font-weight: normal;
     line-height: 0;
+  }
+
+  .modal-image {
+    width: 120px;
+    height: 120px;
   }
 
   @media (max-aspect-ratio: 7/9) {
