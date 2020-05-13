@@ -67,6 +67,12 @@
     text-align: center;
   }
   @media (max-width: 576px) {
+    h1 span {
+      display: block;
+      margin-top: -0.5rem;
+      text-align: right;
+      margin-right: -1rem;
+    }
     #instructions-button {
       margin-bottom: 0;
       margin-right: 0.2rem;

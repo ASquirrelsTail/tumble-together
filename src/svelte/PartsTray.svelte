@@ -1,7 +1,10 @@
 <script>
   import NumbersModal from './NumbersModal.svelte';
+  import { createEventDispatcher } from 'svelte';
   import { holding, currentChallenge, basePath } from '../store.js';
   import { parts } from '../parts.js';
+
+  const dispatch = createEventDispatcher();
 
   function grab(e, part) {
     if (((e.type === 'mousedown' && e.button === 0) ||
@@ -9,6 +12,7 @@
          !$holding) {
       e.preventDefault();
       e.stopPropagation();
+      if (e.type === 'touchstart') dispatch('touch', e);
       if (part.count > 0) {
         console.log(`Grabbed ${part.name}`);
         part.count -= 1;

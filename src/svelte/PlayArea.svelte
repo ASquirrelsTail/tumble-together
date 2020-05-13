@@ -77,8 +77,8 @@
     on:mouseleave="{e => drop(e, true)}"
     on:touchmove={touchMove}
     on:touchend={drop}>
-  <GameBoard bind:boardElement bind:lastGrab />
-  <PartsTray />
+  <GameBoard bind:boardElement bind:lastGrab on:touch="{e => touchMove(e.detail)}"/>
+  <PartsTray on:touch="{e => touchMove(e.detail)}"/>
 </div>
 <Hand {mousePosition}/>
 

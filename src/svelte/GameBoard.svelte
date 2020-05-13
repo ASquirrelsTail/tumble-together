@@ -1,7 +1,7 @@
 <script>
   import MarbleTray from './MarbleTray.svelte';
   import NumbersModal from './NumbersModal.svelte';
-  import { tick } from 'svelte';
+  import { tick, createEventDispatcher } from 'svelte';
   import { holding, currentChallenge } from '../store.js';
   import { board } from '../board.js';
   import { marbles } from '../marbles.js';
@@ -10,6 +10,8 @@
 
   export let lastGrab;
   export let boardElement;
+
+  const dispatch = createEventDispatcher();
 
   $: if ($socket) $socket.on('run', (side) => {
       triggerLever(side);
@@ -22,6 +24,7 @@
         !$holding && !$board.marble && $board[y][x]) {
       e.preventDefault();
       e.stopPropagation();
+      if (e.type === 'touchstart') dispatch('touch', e);
       if (!$board[y][x].locked) {
         console.log(`Grabbed ${$board[y][x].name}`);
         $holding = $board[y][x];
