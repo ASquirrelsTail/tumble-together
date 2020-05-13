@@ -3,7 +3,7 @@
   import {createEventDispatcher, onMount} from 'svelte';
   import ShareURL from './ShareURL.svelte';
   import challenges from '../challenges.js';
-  import { currentChallenge, rooms} from '../store.js'
+  import { currentChallenge, rooms, basePath} from '../store.js'
   import { socket } from '../socket.js';
   import { decode, encode } from '../utilities.js';
 
@@ -22,7 +22,11 @@
     });
 
   const urlParams = new URLSearchParams(window.location.search);
-  if (window.location.pathname.endsWith('room/')) {
+  if (window.location.pathname.endsWith('room/') || window.location.pathname.endsWith('room')) {
+    if (window.location.pathname.endsWith('room')) {
+      history.pushState(null, document.title, window.location.pathname + '/');
+      basePath.update();
+    }
     socket.connect(urlParams.get('uuid'));
     $rooms = true;
   } else {
@@ -36,7 +40,7 @@
         console.log('dipatched');
       }
       
-      fetch('/room/', {method: 'HEAD'}).then((response) => {
+      fetch($basePath + 'room/', {method: 'HEAD'}).then((response) => {
         $rooms = response.ok;
       });
     });
@@ -45,15 +49,16 @@
   function startNewRoom() {
     if (!$socket) socket.connect(false, encode());
     if (!window.location.pathname.endsWith('room/'))
-      history.pushState(null, document.title, window.location.pathname + 'room/');
+      history.pushState(null, document.title, $basePath + 'room/');
     closeMenu();
+    basePath.update();
   }
 
   function leaveRoom() {
     if ($socket) socket.disconnect();
-    if (!window.location.pathname.endsWith('room/'))
-      history.pushState(null, document.title, window.location.pathname.slice(0, 'room/'.length));
+    history.pushState(null, document.title, $basePath);
     closeMenu();
+    basePath.update();
   }
 
 
@@ -74,9 +79,10 @@
     }
     decode(code);
     if (!socket.sendBoard()) {
-      let url = window.location.pathname;
+      let url = $basePath;
       if (code) url += '?code=' + code + '&id=' + (id + 1);
       history.pushState(null, document.title, url);
+      basePath.update();
     }
     closeMenu();
   }
@@ -96,7 +102,7 @@
 
 <button id="menu-button" on:click="{() => visible = !visible}">
   <span>Menu </span>
-  <img src="/images/menu.svg" alt="Menu">
+  <img src="{$basePath}images/menu.svg" alt="Menu">
 </button>
 
 {#if visible}
@@ -105,16 +111,16 @@
   <button on:click|preventDefault="{() => setUpBoard()}">Clear Board</button>
   {#if $rooms}
     {#if !$socket}
-    <a class="btn" href="/room/" on:click|preventDefault={startNewRoom}>Start Shared Room</a>
+    <a class="btn" href="{$basePath}room/" on:click|preventDefault={startNewRoom}>Start Shared Room</a>
     {:else}
-    <a class="btn" href="/" on:click|preventDefault={leaveRoom}>Leave Shared Room</a>
+    <a class="btn" href="{$basePath}" on:click|preventDefault={leaveRoom}>Leave Shared Room</a>
     {/if}
   {/if}
   <button on:click="{() => showChallenges = !showChallenges}">Challenges <span class:up={showChallenges} class="arrow">&gt;</span></button>
   {#if showChallenges}
   <ol transition:slide id="challenges">
     {#each challenges as challenge, challengeId (challengeId)}
-    <li><a href="{window.location.origin + window.location.pathname + '?code=' + challenge.code}"
+    <li><a href="{$basePath + '?code=' + challenge.code}"
         on:click|preventDefault="{() => setUpBoard(challenge, challengeId)}">
       {challenge.name}
     </a></li>
@@ -122,7 +128,7 @@
   </ol>
   {/if}
   <ShareURL />
-  <a class="btn" href="/about.html" on:click|preventDefault={showAboutModal}>About</a>
+  <a class="btn" href="{$basePath}about.html" on:click|preventDefault={showAboutModal}>About</a>
 </div>
 {/if}
 <style>
@@ -217,5 +223,9 @@
     border: 1px solid #ccc;
     border-radius: 2px;
     text-align: center;
+  }
+
+  a:hover.btn {
+    text-decoration: none;
   }
 </style>

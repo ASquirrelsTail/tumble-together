@@ -11,6 +11,8 @@
 
     if (pathname.endsWith('room/')) pathname = pathname.slice(0, - 'room/'.length);
     if (pathname.endsWith('about/')) pathname = pathname.slice(0, - 'about/'.length);
+    if (pathname.endsWith('room')) pathname = pathname.slice(0, - 'room'.length);
+    if (pathname.endsWith('about')) pathname = pathname.slice(0, - 'about'.length);
 
     let challengeId = $currentChallenge ? '&id=' + $currentChallenge.id : '';
 

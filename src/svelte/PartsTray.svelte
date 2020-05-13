@@ -1,6 +1,6 @@
 <script>
   import NumbersModal from './NumbersModal.svelte';
-  import { holding, currentChallenge } from '../store.js';
+  import { holding, currentChallenge, basePath } from '../store.js';
   import { parts } from '../parts.js';
 
   function grab(e, part) {
@@ -49,7 +49,7 @@
       on:touchstart="{e => grab(e, part)}"
       on:mouseup="{e => edit(e, part)}"
       on:touchend="{e => edit(e, part)}">
-    <img src="/images/{part.name}.svg" alt={part.name}>
+    <img src="{$basePath}images/{part.name}.svg" alt={part.name}>
     <span class="count">x 
       {#if part.count != Infinity}
         {part.count}
@@ -60,7 +60,7 @@
   </div>
   <NumbersModal bind:visible="{part.editing}" title="Number of {part.name}s"
     number={part.count} on:update="{(e) => updatePartNumbers(part, e.detail)}">
-    <img class="modal-image" src="/images/{part.name}.svg" alt={part.name}>
+    <img class="modal-image" src="{$basePath}images/{part.name}.svg" alt={part.name}>
   </NumbersModal>
   {/each}
 </div>

@@ -6,6 +6,7 @@
   import { board } from '../board.js';
   import { marbles } from '../marbles.js';
   import { socket } from '../socket.js';
+  import { basePath } from '../store.js';
 
   export let lastGrab;
   export let boardElement;
@@ -124,17 +125,17 @@
 
 </script>
 <div id="board-container">
-  <div id="top-trays">
+  <div id="top-trays" class:no-challenge={!$currentChallenge}>
     <div class="container">
       <div class="marble-numbers" on:click="{() => editMarbleNumbers('left')}">
-        <img src="/images/marbleblue.svg" alt="{$marbles.numbers.left} Blue Marbles">
+        <img src="{$basePath}images/marbleblue.svg" alt="{$marbles.numbers.left} Blue Marbles">
         x {$marbles.numbers.left}
       </div>
       <MarbleTray marbles={$marbles.left}/>
     </div>
     <div class="container">
       <div class="marble-numbers" on:click="{() => editMarbleNumbers('right')}">
-        <img src="/images/marblered.svg" alt="{$marbles.numbers.right} Red Marbles">
+        <img src="{$basePath}images/marblered.svg" alt="{$marbles.numbers.right} Red Marbles">
         x {$marbles.numbers.right}
       </div>
       <MarbleTray direction="right" marbles={$marbles.right}/>
@@ -143,12 +144,12 @@
   <div id="start-ramps">
     <div class="marble-start">
       {#if ($board.marble && $board.position && (($board.direction === 1 && $board.position.y === -1)))}
-        <img bind:this={marbleElement} class="marble" src="/images/marble{$board.marble.color}.svg" alt="">
+        <img bind:this={marbleElement} class="marble" src="{$basePath}images/marble{$board.marble.color}.svg" alt="">
       {/if}
     </div>
     <div class="marble-start flipped">
       {#if ($board.marble && $board.position && (($board.direction === -1 && $board.position.y === -1)))}
-        <img bind:this={marbleElement} class="marble" src="/images/marble{$board.marble.color}.svg" alt="">
+        <img bind:this={marbleElement} class="marble" src="{$basePath}images/marble{$board.marble.color}.svg" alt="">
       {/if}
     </div>
   </div>
@@ -165,14 +166,15 @@
           <div class:flipped={part.facing} class={part.name} class:right="{marbleDirection(x, y)}" >
             <div class="wrapper" class:down="{isMoving(x, y)}"
                 class:reset>
-              <img class="part" class:locked={part.locked} src="/images/{part.name}.svg" alt={part.name}>
+              <img class="part" class:locked={part.locked} src="{$basePath}images/{part.name}.svg" alt={part.name}>
               {#if hasMarble(x, y)}
-                <img bind:this={marbleElement} class="marble" src="/images/marble{$board.marble.color}.svg" alt="">
+                <img bind:this={marbleElement} class="marble" src="{$basePath}images/marble{$board.marble.color}.svg" alt="">
               {/if}
             </div>
           </div>
           {:else if hasMarble(x, y)}
-            <img bind:this={marbleElement} class="marble" class:right="{!Math.floor(($board.direction +1) / 2)}"src="/images/marble{$board.marble.color}.svg" alt="">
+            <img bind:this={marbleElement} class="marble" class:right="{!Math.floor(($board.direction +1) / 2)}"
+              src="{$basePath}images/marble{$board.marble.color}.svg" alt="">
           {/if}
         </div>
         {:else}
@@ -197,13 +199,13 @@
 <NumbersModal bind:visible={$marbles.edit.left} title="Number of Blue Marbles"
     number={$marbles.numbers.left} infinity={false} max=20
     on:update="{(e) => updateMarbleNumbers('left', e.detail)}">
-  <img class="modal-image" src="/images/marbleblue.svg" alt="Blue Marble">
+  <img class="modal-image" src="{$basePath}images/marbleblue.svg" alt="Blue Marble">
 </NumbersModal>
 
 <NumbersModal bind:visible={$marbles.edit.right} title="Number of Red Marbles"
     number={$marbles.numbers.right} infinity={false} max=20
     on:update="{(e) => updateMarbleNumbers('right', e.detail)}">
-  <img class="modal-image" src="/images/marblered.svg" alt="Red Marble">
+  <img class="modal-image" src="{$basePath}images/marblered.svg" alt="Red Marble">
 </NumbersModal>
 
 
@@ -222,6 +224,8 @@
   .marble-numbers {
     text-align: center;
     padding-bottom: 0.5em;
+  }
+  .no-challenge .marble-numbers {
     cursor: pointer;
   }
   .marble-numbers img {

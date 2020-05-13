@@ -1,5 +1,6 @@
 <script>
   import { fly } from 'svelte/transition';
+  import { basePath } from '../store.js';
 
   export let marbles = [];
   export let direction = 'left';
@@ -9,10 +10,10 @@
 <div id="marble-tray" class:right="{direction==='right'}">
   {#each marbles as marble, i (i)}
   {#if result}
-    <img src="/images/marble{marble.color}.svg" alt="{marble.color} marble"
+    <img src="{$basePath}images/marble{marble.color}.svg" alt="{marble.color} marble"
       in:fly="{{ x: -200, duration: 600 }}">
   {:else}
-    <img src="/images/marble{marble.color}.svg" alt="{marble.color} marble">
+    <img src="{$basePath}images/marble{marble.color}.svg" alt="{marble.color} marble">
   {/if}
   {/each}
 </div>

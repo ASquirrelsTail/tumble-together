@@ -1,7 +1,7 @@
 <script>
   import Modal from './Modal.svelte';
   import {createEventDispatcher} from 'svelte';
-  import { currentChallenge, rooms } from '../store.js';
+  import { currentChallenge, rooms, basePath } from '../store.js';
 
   export let visible = false;
 
@@ -28,7 +28,7 @@
         <h3>Required Output:</h3>
         <p>
           {#each $currentChallenge.output as marble }
-            <img src="/images/marble{marble === 'b' ? 'blue' : 'red'}.svg" alt="Marble">
+            <img src="{$basePath}images/marble{marble === 'b' ? 'blue' : 'red'}.svg" alt="Marble">
           {/each}
         </p>
       {/if}
@@ -43,12 +43,12 @@
     {#if !$currentChallenge}
       <p>To start the marbles rolling press the trigger on the side you would like to start with. To put the marbles back to the start, or end the run early, press the <span class="orbitron">Reset</span> button in the bottom right. You can change the number of marbles by clicking/tapping the marbles at the top of the board.</p>
     {/if}
-    <p>A collection of ready made challenges can be found in the <span class="orbitron">Menu <img src="/images/menu.svg" alt="Menu"></span> in the top right, as well as buttons to clear the board and copy the current board to a URL you can share with others.</p>
+    <p>A collection of ready made challenges can be found in the <span class="orbitron">Menu <img src="{$basePath}images/menu.svg" alt="Menu"></span> in the top right, as well as buttons to clear the board and copy the current board to a URL you can share with others.</p>
     {#if $rooms}
-      <p>To work together with friends you can start a shared room from the <span class="orbitron">Menu <img src="/images/menu.svg" alt="Menu"></span> and send the link to others to work on he same board, tackle challenges together and share changes in real time. Use the menu to leave a shared room as well.</p>
+      <p>To work together with friends you can start a shared room from the <span class="orbitron">Menu <img src="{$basePath}images/menu.svg" alt="Menu"></span> and send the link to others to work on he same board, tackle challenges together and share changes in real time. Use the menu to leave a shared room as well.</p>
     {/if}
     <p>You can return to these instructions at any time by clicking the <span class="orbitron">Instructions ?</span> button in the top right</p>
-    <p>More information about Tumble Together and the <a href="https://www.turingtumble.com/" target="_blank">Turing Tumble</a> can be found on <a href="/about/" on:click|preventDefault={aboutModal}>the about page.</a></p>
+    <p>More information about Tumble Together and the <a href="https://www.turingtumble.com/" target="_blank">Turing Tumble</a> can be found on <a href="{$basePath}about/" on:click|preventDefault={aboutModal}>the about page.</a></p>
   </article>
 </Modal>
 
