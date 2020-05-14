@@ -10,5 +10,6 @@ export const basePath = writable((window.location.pathname.endsWith('room/') ||
 basePath.update = function() {
   // Sets the base path to the relative path given the current location.
   this.set((window.location.pathname.endsWith('room/') || window.location.pathname.endsWith('room') ||
-    window.location.pathname.endsWith('about/') || window.location.pathname.endsWith('about')) ? '../' : './');
+    window.location.pathname.endsWith('about/') || window.location.pathname.endsWith('about') ||
+    window.location.pathname.endsWith('about/index.html')) ? '../' : './');
 }

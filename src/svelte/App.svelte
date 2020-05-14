@@ -12,7 +12,7 @@
 
 
 <nav>
-  <h1>Tumble Together! {#if true} <span>- Sharing</span>{/if}</h1>
+  <h1>Tumble Together! {#if $socket} <span>- Sharing</span>{/if}</h1>
   <div>
     <button id="instructions-button" on:click="{() => instructionModal = true}">
       <span class="title">Instructions </span>

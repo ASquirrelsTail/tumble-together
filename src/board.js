@@ -160,5 +160,13 @@ board.encode = function () {
   return get(this).encode();
 }
 board.decode = function (code) {
-  this.set(Board.create(code));
+  try {
+    this.set(Board.create(code));
+  } 
+  catch(err) {
+    console.log(err);
+    console.log('Initializing empty board')
+    this.set(Board.create());
+  }
+  
 }

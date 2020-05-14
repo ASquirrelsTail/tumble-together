@@ -16,7 +16,7 @@ app.use(express.static('public', {
 }));
 
 app.get('/room/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+  res.sendFile(__dirname + '/public/about/index.html'); // Use about page as it has correct relative file names.
 });
 
 let board = 'KKKKKKKKKKK';

@@ -243,7 +243,8 @@
     overflow: visible;
   }
   .position {
-    background-image: url(/images/bg-peg.svg);
+    background-image: url(./images/bg-peg.svg);
+    background-image: url(../images/bg-peg.svg);
     background-size: cover;
     display: inline-block;
     width: 6vh;
@@ -263,7 +264,8 @@
   }
 
   .position.slot {
-    background-image: url(/images/bg-slot.svg);
+    background-image: url(./images/bg-slot.svg);
+    background-image: url(../images/bg-slot.svg);
   }
   .position.blank {
     background-image: none;
@@ -518,7 +520,7 @@
     width: 18vh;
     height: 6vh;
     overflow: visible;
-    background-image: url(/images/bg-start.svg);
+    background-image: url(./images/bg-start.svg) url(../images/bg-start.svg);
     background-repeat: none;
     background-size: cover;
   }

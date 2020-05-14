@@ -2,6 +2,8 @@
 
 Tumble Together is a web-based emulator for the [Turing Tumble](https://www.turingtumble.com/) marble-powered mechanical computer to help build, test and share designs. Tumble Together allows users to quickly share challenges and solutions, and is a useful companion for using the Turing Tumble to teach kids about computer science. It can be used to share challenges and solutions as a URL, and to collaborate on shared boards in real time.
 
+A full version with collaborative boards (with up to 10 simultaneous rooms) is available to try on [Heroku](http://tumble-together.herokuapp.com/). A static version that only runs on the client side can be found on [GitHub Pages](https://asquirrelstail.github.io/tumble-together/).
+
 I made Tumble Together to continue playing with this awesome marble powered mechanical computer remotely with my nephew during the Covid-19 pandemic.
 
 ## Features
@@ -21,6 +23,8 @@ I made Tumble Together to continue playing with this awesome marble powered mech
 
 ## Deployment
 
+### With Node.js
+
 With Node.js installed clone or download the repository, navigate to the base folder and run the following commands:
 
 ```
@@ -39,3 +43,7 @@ Or, to just run the client side app locally run:
 ```
 $ npm run local
 ```
+
+### Without Node.js
+
+To run on any web server you can just clone or download the static branch (which is used to deploy to [GitHub Pages](https://asquirrelstail.github.io/tumble-together/)) and use the files stored there.
