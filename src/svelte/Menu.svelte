@@ -27,6 +27,7 @@
       history.pushState(null, document.title, window.location.pathname + '/');
       basePath.update();
     }
+    decode();
     socket.connect(urlParams.get('uuid'));
     $rooms = true;
   } else {
