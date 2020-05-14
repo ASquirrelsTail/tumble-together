@@ -30,8 +30,8 @@
     mousePosition.top = e.pageY;
   }
 
-  function touchMove(e) {
-    if (e.touches.length === 1) {
+  function touchMove(e, force=false) {
+    if (e.touches.length === 1 && ($holding || force)) {
       setMousePosition(e.touches[0]);
       e.preventDefault();
       e.stopPropagation();
@@ -78,7 +78,7 @@
     on:touchmove={touchMove}
     on:touchend={drop}>
   <GameBoard bind:boardElement bind:lastGrab on:touch="{e => touchMove(e.detail)}"/>
-  <PartsTray on:touch="{e => touchMove(e.detail)}"/>
+  <PartsTray on:touch="{e => touchMove(e.detail, true)}"/>
 </div>
 <Hand {mousePosition}/>
 
