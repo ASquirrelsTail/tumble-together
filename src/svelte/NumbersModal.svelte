@@ -9,6 +9,7 @@
   export let visible = false;
 
   let input;
+  let inputElement;
   $: input = number === Infinity ? '∞' : number;
 
   const dispatch = createEventDispatcher();
@@ -26,12 +27,15 @@
 
   function beforeInput(e) {
     if (e.data !== null){
-      if (input === '∞' || '') input = '0';
-      let newData = e.data.replace(/[^0-9]/, '');
-      input = Math.max(0, parseInt(input + newData));
-      if (input > max) input = infinity ? '∞' : max;
-      e.preventDefault();
+      const newData = e.data.replace(/[^0-9]/, '');
+      if (newData === '') e.preventDefault();
+      if (input === '∞') input = '';
     }
+  }
+
+  function onInput(e) {
+    input = Math.max(0, parseInt(input));
+    if (input > max) input = infinity ? '∞' : max;
   }
 
   function cancel() {
@@ -52,8 +56,8 @@
     </div>
     <div>
       <div class="number-input">
-        <button class="decrease" on:click={decrease}>-</button><form on:submit|preventDefault={ok}><input maxlength=2 type="text" bind:value={input}
-        class:infinity="{input==='∞'}" on:beforeinput={beforeInput}></form><button class="increase"  on:click|preventDefault={increase}>+</button>
+        <button class="decrease" on:click={decrease}>-</button><form on:submit|preventDefault={ok}><input maxlength=2 type="text" bind:value={input} bind:this={inputElement} class:infinity="{input==='∞'}" on:input={onInput}
+        on:beforeinput={beforeInput}></form><button class="increase"  on:click|preventDefault={increase}>+</button>
       </div>
       {#if infinity}
       <div class="infinity-button">
