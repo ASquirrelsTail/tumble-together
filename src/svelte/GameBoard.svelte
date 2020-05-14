@@ -520,7 +520,8 @@
     width: 18vh;
     height: 6vh;
     overflow: visible;
-    background-image: url(./images/bg-start.svg) url(../images/bg-start.svg);
+    background-image: url(./images/bg-start.svg);
+    background-image: url(../images/bg-start.svg);
     background-repeat: none;
     background-size: cover;
   }
