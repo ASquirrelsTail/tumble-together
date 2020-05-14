@@ -46,4 +46,4 @@ $ npm run local
 
 ### Without Node.js
 
-To run on any web server you can just clone or download the static branch (which is used to deploy to [GitHub Pages](https://asquirrelstail.github.io/tumble-together/)) and use the files stored there.
+To run on any web server you can just clone or download the [static branch](https://github.com/ASquirrelsTail/tumble-together/tree/gh-pages) (which is used to deploy to [GitHub Pages](https://asquirrelstail.github.io/tumble-together/)) and use the files stored there.
