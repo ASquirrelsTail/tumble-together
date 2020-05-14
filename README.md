@@ -28,7 +28,7 @@ $ npm install
 $ npm run build
 ```
 
-To start the Express server with the ability to wor together live on the same board run:
+To start the Express server with the ability to work together live on the same board run:
 
 ```
 $ npm run start

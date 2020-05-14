@@ -34,6 +34,7 @@
   }
 
   function onInput(e) {
+    if (input === '') input = '0';
     input = Math.max(0, parseInt(input));
     if (input > max) input = infinity ? '∞' : max;
   }

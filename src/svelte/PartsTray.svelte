@@ -75,7 +75,7 @@
     flex-direction: column;
     justify-content: flex-start;
     width: 8vh;
-    padding: 0.4vh;
+    padding: 0.4vmin;
     border: 3px solid #c8c8c8;
     border-radius: 10px;
     margin: 10px;
@@ -99,13 +99,13 @@
     display: block;
     font-weight: bold;
     text-align: right;
-    padding-bottom: 1rem;
-    margin-top: -0.5rem;
+    padding-bottom: 1em;
+    margin-top: -0.5em;
   }
   .count .infinity {
     position: relative;
     top: 0.35rem;
-    font-size: 2rem;
+    font-size: 2em;
     font-weight: normal;
     line-height: 0;
   }
@@ -127,6 +127,21 @@
     .part img{
       width: 9.6vw;
       height: 9.6vw;
+    }
+  }
+
+  @media (max-width: 576px), (max-height: 576px) {
+    #parts-tray {
+      margin: 3px;
+    }
+    .count {
+      max-height: 1em;
+      overflow: visible;
+      font-size: 0.8em;
+      padding-bottom: 0.3em;
+    }
+    .count .infinity {
+      top: 0.2em;
     }
   }
 </style>

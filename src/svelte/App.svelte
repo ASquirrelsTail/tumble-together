@@ -12,7 +12,7 @@
 
 
 <nav>
-  <h1>Tumble Together! {#if $socket} <span>- Sharing</span>{/if}</h1>
+  <h1>Tumble Together! {#if true} <span>- Sharing</span>{/if}</h1>
   <div>
     <button id="instructions-button" on:click="{() => instructionModal = true}">
       <span class="title">Instructions </span>
@@ -39,6 +39,13 @@
     margin-bottom: 0.5rem;
     border-bottom: solid #3c98f6 5px;
   }
+
+  @media (max-width: 576px), (max-height: 576px) {
+    nav {
+      margin-bottom: 2px;
+    }
+  }
+
   h1 {
     margin: 0 0.5rem;
   }
@@ -67,18 +74,20 @@
     text-align: center;
   }
   @media (max-width: 576px) {
-    h1 span {
-      display: block;
-      margin-top: -0.5rem;
-      text-align: right;
-      margin-right: -1rem;
-    }
     #instructions-button {
       margin-bottom: 0;
       margin-right: 0.2rem;
     }
     #instructions-button .title {
       display: none;
+    }
+  }
+  @media (max-width: 630px) {
+    h1 span {
+      display: block;
+      margin-top: -0.5rem;
+      text-align: right;
+      margin-right: -1rem;
     }
   }
 </style>

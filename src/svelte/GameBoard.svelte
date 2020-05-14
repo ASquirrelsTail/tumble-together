@@ -236,6 +236,7 @@
     width: 1.5em;
     margin-bottom: -0.4em;
   }
+
   .row {
     width: 66vh;
     height: 6vh;
@@ -499,7 +500,7 @@
   #results-tray {
     display: flex;
     justify-content: right;
-    align-content: center;
+    align-items: center;
   }
 
   #levers {
@@ -547,5 +548,25 @@
     width: 40px;
     height: 40px;
     margin: 1rem;
+  }
+
+  button {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 576px), (max-height: 576px) {
+    .marble-numbers {
+      padding-bottom: 0.1em;
+    }
+    .marble-numbers img {
+      height: 1em;
+      width: 1em;
+      margin-bottom: -0.2em;
+    }
+
+    button {
+      font-size: 0.8em;
+      padding: 0.1em;
+    }
   }
 </style>
