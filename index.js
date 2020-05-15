@@ -7,13 +7,7 @@ const io = require('socket.io')(http);
 
 const maxRooms = process.env.MAX_ROOMS || 10;
 
-app.use(express.static('public', {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.html') || path.endsWith('.js')) {
-      res.setHeader('Cache-Control', 'no-cache');
-    }
-  }
-}));
+app.use(express.static('public'));
 
 app.get('/room/', (req, res) => {
   res.sendFile(__dirname + '/public/about/index.html'); // Use about page as it has correct relative file names.
