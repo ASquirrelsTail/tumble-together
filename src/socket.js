@@ -1,6 +1,7 @@
 import { writable, get } from 'svelte/store';
 import io from 'socket.io-client';
 import { encode, decode } from './utilities.js';
+import { toastMessage } from './store.js';
 
 export const socket = writable(false);
 socket.connect = function (uuid, board) {
@@ -14,18 +15,19 @@ socket.connect = function (uuid, board) {
   $socket.on('joined', (handshake) => {
     decode(handshake.board);
     history.pushState(null, document.title, window.location.pathname + '?uuid=' + handshake.uuid);
+    toastMessage.set('Joined shared room id: ' + handshake.uuid + '.');
   });
 
   $socket.on('board', decode);
 
   $socket.on('failed', (reason) => {
     this.disconnect();
-    alert(reason);
+    toastMessage.set('Failed to join shared room: ' + reason);
   });
 
   $socket.on('disconnect', (reason) => {
     this.disconnect();
-    if (reason !== 'io client disconnect') alert(reason);
+    if (reason !== 'io client disconnect') toastMessage.set('Disconnected from shared room: ' + reason);
   });
 }
 socket.disconnect = function () {

@@ -4,6 +4,7 @@ import { writable } from 'svelte/store';
 export const holding = writable(false);
 export const rooms = writable(false);
 export const currentChallenge = writable(false);
+export const toastMessage = writable(false);
 
 export const basePath = writable((window.location.pathname.endsWith('room/') ||
   window.location.pathname.endsWith('about/')) ? '../' : './');

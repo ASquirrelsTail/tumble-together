@@ -3,7 +3,7 @@
   import {createEventDispatcher, onMount} from 'svelte';
   import ShareURL from './ShareURL.svelte';
   import challenges from '../challenges.js';
-  import { currentChallenge, rooms, basePath} from '../store.js'
+  import { currentChallenge, rooms, basePath, toastMessage} from '../store.js'
   import { socket } from '../socket.js';
   import { decode, encode } from '../utilities.js';
 
@@ -38,7 +38,6 @@
         $currentChallenge = challenges[newId];
         document.title = 'Tumble Together - ' + $currentChallenge.name;
         dispatch('instructionModal');
-        console.log('dipatched');
       }
       
       fetch($basePath + 'room/', {method: 'HEAD'}).then((response) => {
@@ -58,6 +57,7 @@
   function leaveRoom() {
     if ($socket) socket.disconnect();
     history.pushState(null, document.title, $basePath);
+    $toastMessage = 'Left shared room.';
     closeMenu();
     basePath.update();
   }
@@ -110,11 +110,14 @@
     if (pathname.endsWith('about')) pathname = pathname.slice(0, - 'about'.length);
 
     let challengeId = $currentChallenge ? '&id=' + $currentChallenge.id : '';
+
+    $toastMessage = 'Board URL copied to clipboard.';
     
     return `${window.location.origin}${pathname}?code=${code}${challengeId}`;
   }
 
   function shareRoomURL() {
+    $toastMessage = 'Room URL copied to clipboard.';
     return window.location.origin + window.location.pathname + window.location.search;
   }
 
@@ -133,7 +136,7 @@
     {#if !$socket}
     <a class="btn" href="{$basePath}room/" on:click|preventDefault={startNewRoom}>Start Shared Room</a>
     {:else}
-    <ShareURL textFunction={shareRoomURL}>Copy Room URL To Clipboard</ShareURL>
+    <ShareURL textFunction={shareRoomURL} on:close={closeMenu}>Copy Room URL To Clipboard</ShareURL>
     <a class="btn" href="{$basePath}" on:click|preventDefault={leaveRoom}>Leave Shared Room</a>
     {/if}
   {/if}
@@ -148,7 +151,7 @@
     {/each}
   </ol>
   {/if}
-  <ShareURL textFunction={shareBoardURL}>Copy Board URL To Clipboard</ShareURL>
+  <ShareURL textFunction={shareBoardURL} on:close={closeMenu}>Copy Board URL To Clipboard</ShareURL>
   <a class="btn" href="{$basePath}about.html" on:click|preventDefault={showAboutModal}>About</a>
 </div>
 {/if}

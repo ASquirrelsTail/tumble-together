@@ -3,6 +3,7 @@
   import Menu from './Menu.svelte';
   import AboutModal from './AboutModal.svelte';
   import InstructionModal from './InstructionModal.svelte';
+  import Toast from './Toast.svelte';
   import { socket } from '../socket.js';
 
   let aboutModal = false;
@@ -19,13 +20,14 @@
       <span class="question">?</span>
     </button>
     <Menu on:aboutModal="{() => aboutModal = true}"
-      on:instructionModal="{() => instructionModal = true}"/>
+      on:instructionModal="{() => instructionModal = true}" />
   </div>
 </nav>
 <PlayArea />
 
 <AboutModal bind:visible={aboutModal} />
 <InstructionModal bind:visible={instructionModal} on:aboutModal="{() => aboutModal = true}"/>
+<Toast />
 
 <style>
   nav {

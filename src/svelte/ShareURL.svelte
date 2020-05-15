@@ -1,5 +1,8 @@
 <script>
+  import {createEventDispatcher} from 'svelte';
   export let textFunction = () => '';
+
+  const dispatch = createEventDispatcher();
 
   let copyText;
 
@@ -15,6 +18,7 @@
 
     copyText.style.display = '';
 
+    dispatch('close');
   }
 </script>
 
