@@ -99,6 +99,25 @@
     dispatch('aboutModal');
     closeMenu();
   }
+
+  function shareBoardURL() {
+    let code = encode();
+    let pathname = window.location.pathname;
+
+    if (pathname.endsWith('room/')) pathname = pathname.slice(0, - 'room/'.length);
+    if (pathname.endsWith('about/')) pathname = pathname.slice(0, - 'about/'.length);
+    if (pathname.endsWith('room')) pathname = pathname.slice(0, - 'room'.length);
+    if (pathname.endsWith('about')) pathname = pathname.slice(0, - 'about'.length);
+
+    let challengeId = $currentChallenge ? '&id=' + $currentChallenge.id : '';
+    
+    return `${window.location.origin}${pathname}?code=${code}${challengeId}`;
+  }
+
+  function shareRoomURL() {
+    return window.location.origin + window.location.pathname + window.location.search;
+  }
+
 </script>
 
 <button id="menu-button" on:click="{() => visible = !visible}">
@@ -114,6 +133,7 @@
     {#if !$socket}
     <a class="btn" href="{$basePath}room/" on:click|preventDefault={startNewRoom}>Start Shared Room</a>
     {:else}
+    <ShareURL textFunction={shareRoomURL}>Copy Room URL To Clipboard</ShareURL>
     <a class="btn" href="{$basePath}" on:click|preventDefault={leaveRoom}>Leave Shared Room</a>
     {/if}
   {/if}
@@ -128,7 +148,7 @@
     {/each}
   </ol>
   {/if}
-  <ShareURL />
+  <ShareURL textFunction={shareBoardURL}>Copy Board URL To Clipboard</ShareURL>
   <a class="btn" href="{$basePath}about.html" on:click|preventDefault={showAboutModal}>About</a>
 </div>
 {/if}

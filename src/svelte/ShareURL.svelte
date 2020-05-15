@@ -1,24 +1,10 @@
 <script>
-  import { encode } from '../utilities.js';
-  import { currentChallenge } from '../store.js';
+  export let textFunction = () => '';
 
   let copyText;
 
   function copyToClipboard() {
-    let code = encode();
-
-    let pathname = window.location.pathname;
-
-    if (pathname.endsWith('room/')) pathname = pathname.slice(0, - 'room/'.length);
-    if (pathname.endsWith('about/')) pathname = pathname.slice(0, - 'about/'.length);
-    if (pathname.endsWith('room')) pathname = pathname.slice(0, - 'room'.length);
-    if (pathname.endsWith('about')) pathname = pathname.slice(0, - 'about'.length);
-
-    let challengeId = $currentChallenge ? '&id=' + $currentChallenge.id : '';
-
-    let url = `${window.location.origin}${pathname}?code=${code}${challengeId}`;
-
-    copyText.value = url;
+    copyText.value = textFunction();
 
     copyText.style.display = 'inline-block';
 
@@ -32,13 +18,13 @@
   }
 </script>
 
-<div id="copy-url">
-  <button on:click={copyToClipboard}>Copy Board Link To Clipboard</button>
-  <textarea name="url" id="copy-text" cols="30" rows="10" bind:this={copyText}></textarea>
+<div class="copy-url">
+  <button on:click={copyToClipboard}><slot></slot></button>
+  <textarea name="url" class="copy-text" cols="30" rows="10" bind:this={copyText}></textarea>
 </div>
 
 <style>
-  #copy-text {
+  .copy-text {
     display: none;
     width: 1px;
     height: 1px;
