@@ -200,7 +200,7 @@ export default [
   {
     id: 27,
     name: 'Reflection',
-    code: '-G2CB2HE2EB2HE2EB2HE2EB2HE2EKK_II2B6A7B4A8A',
+    code: '-KB2E2BE2EB2HE2EB2HE2EB2HE2EKK_II2B6A7B4A8A',
     objective: 'Reverse the direction of each of the 9 starting bits, regardless of the direction they point to start.'
   },
   {

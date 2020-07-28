@@ -189,9 +189,9 @@
   </div>
   <div id="levers">
     <button on:click={triggerLeft}
-      disabled="{$board.marble || triggerLock || ($currentChallenge && $currentChallenge.trigger !== 'left')}">Trigger Left</button>
+      disabled="{$board.marble || triggerLock || ($currentChallenge && $currentChallenge.trigger === 'right')}">Trigger Left</button>
     <button on:click={triggerRight}
-      disabled="{$board.marble || triggerLock || ($currentChallenge && $currentChallenge.trigger !== 'right')}">Trigger Right</button>
+      disabled="{$board.marble || triggerLock || ($currentChallenge && $currentChallenge.trigger === 'left')}">Trigger Right</button>
   </div>
   <div id="results-tray">
     <MarbleTray result={true} direction="right" marbles={$marbles.results}/>
