@@ -16,7 +16,6 @@ app.get('/room/', (req, res) => {
 let board = 'KKKKKKKKKKK';
 
 class Room {
-  static s = [];
   static start(board) {
     if (Room.s.length < maxRooms) {
       const newRoom = new Room(board);
@@ -66,6 +65,8 @@ class Room {
     socket.on('disconnect', () => this.leave());
   }
 }
+
+Room.s = [];
 
 io.on('connection', (socket) => {
   const roomUuid = socket.handshake.query.uuid;

@@ -48,6 +48,7 @@ export default class Board extends Array {
       }
       if (result === false) {
         this.marble = false;
+        this.position = false;
         throw `Marble has escaped at ${this.position.x}, ${this.position.y}!`;
       }
       this.direction = result;
