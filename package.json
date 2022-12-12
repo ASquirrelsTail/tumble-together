@@ -23,7 +23,7 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "sirv-cli": "^0.4.4",
     "socket.io": "^2.4.0",
     "uuid": "^8.0.0"
