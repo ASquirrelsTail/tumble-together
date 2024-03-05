@@ -1,10 +1,11 @@
 import { writable, get } from 'svelte/store';
 import { board } from './board.js';
 import { urlEncode64 } from './constants.js';
+import { customMix } from './store.js';
 
 class Marble {
   constructor() {
-
+    
   }
   get color() {
     return this.constructor.color;
@@ -32,13 +33,27 @@ marbles.reset = function (left, right) {
   });
 
   this.update($marbles => {
-    if (typeof left !== "undefined" && typeof right !== "undefined")
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const $customMix = get(customMix);
+
+    if ($customMix)
+    {
+      let mix = $customMix.split("-");
+      mix.left = mix[0];
+      mix.right = mix[1];
+      $marbles.numbers = {left: mix.left.length, right: mix.right.length};
+      $marbles.left = mix.left.split('').map(color => color === 'r'? new RedMarble(): new BlueMarble());
+      $marbles.right = mix.right.split('').map(color => color === 'r'? new RedMarble(): new BlueMarble());
+    }
+    else if (typeof left !== "undefined" && typeof right !== "undefined")
+    {
       $marbles.numbers = {left, right};
-
+      $marbles.left = [...Array($marbles.numbers.left)].map(i => new BlueMarble());
+      $marbles.right = [...Array($marbles.numbers.right)].map(i => new RedMarble());
+    }
+        
     $marbles.results = [];
-    $marbles.left = [...Array($marbles.numbers.left)].map(i => new BlueMarble());
-    $marbles.right = [...Array($marbles.numbers.right)].map(i => new RedMarble());
-
     return $marbles;
   });
 }

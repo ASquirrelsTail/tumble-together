@@ -3,7 +3,7 @@
   import {createEventDispatcher, onMount} from 'svelte';
   import ShareURL from './ShareURL.svelte';
   import challenges from '../challenges.js';
-  import { currentChallenge, rooms, basePath, toastMessage} from '../store.js'
+  import { currentChallenge, rooms, basePath, toastMessage, customMix} from '../store.js'
   import { socket } from '../socket.js';
   import { decode, encode } from '../utilities.js';
 
@@ -31,6 +31,7 @@
     socket.connect(urlParams.get('uuid'));
     $rooms = true;
   } else {
+    customMix.set(urlParams.has('custom-mix') ? urlParams.get('custom-mix') : false);
     decode(urlParams.get('code'));
     onMount(() => {
       let newId = urlParams.has('id') ? urlParams.get('id') - 1 : false;
@@ -110,10 +111,11 @@
     if (pathname.endsWith('about')) pathname = pathname.slice(0, - 'about'.length);
 
     let challengeId = $currentChallenge ? '&id=' + $currentChallenge.id : '';
+    let mix = $customMix ? '&custom-mix=' + $customMix : '';
 
     $toastMessage = 'Board URL copied to clipboard.';
     
-    return `${window.location.origin}${pathname}?code=${code}${challengeId}`;
+    return `${window.location.origin}${pathname}?code=${code}${challengeId}${mix}`;
   }
 
   function shareRoomURL() {
