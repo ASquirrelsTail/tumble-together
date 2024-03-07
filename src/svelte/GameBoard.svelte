@@ -2,7 +2,7 @@
   import MarbleTray from './MarbleTray.svelte';
   import NumbersModal from './NumbersModal.svelte';
   import { tick, createEventDispatcher } from 'svelte';
-  import { holding, currentChallenge } from '../store.js';
+  import { holding, currentChallenge, customMix } from '../store.js';
   import { board } from '../board.js';
   import { marbles } from '../marbles.js';
   import { socket } from '../socket.js';
@@ -46,7 +46,7 @@
 
   function triggerLever(side='left') {
     if (!$board.marble && $marbles[side].length) {
-      $board.startRun($marbles[side].pop(), side, async () => {
+      $board.startRun($marbles[side].shift(), side, async () => {
         // Starts a marble run, waits for the marble to animate through current part before advancing it through the board.
         $board = $board;
         reset = true; // Applies reset class to clear transition based animations.
@@ -115,7 +115,7 @@
   }
 
   function editMarbleNumbers(side) {
-    $marbles.edit[side] = !$currentChallenge;
+    $marbles.edit[side] = !$currentChallenge && !$customMix;
     $marbles = $marbles;
   }
 

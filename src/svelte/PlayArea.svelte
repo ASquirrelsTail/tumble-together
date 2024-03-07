@@ -55,6 +55,15 @@
         console.log(`Placed ${$holding.name}`);
         let flipableNeighbors = Array.from($board.flipableNeighbors(...boardPosition));
         if (flipableNeighbors.length > 1) flipableNeighbors.forEach(part => part.facing = flipableNeighbors[1].facing);
+        
+        // flip every gear in a non-slot position, so they animate correctly
+        for (let row = 0; row < 11; ++row) {
+          for (let col = 0; col < 11; ++col) {
+            if (!$board.hasSlot(col, row) && $board[col][row]) {
+              $board[col][row].facing = $board[col][row].facing + 1 % 2;
+            }
+          }
+        }
       }else{
         $parts.find(part => part.name === $holding.name).count++;
         $parts = $parts;
