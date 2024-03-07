@@ -35,18 +35,21 @@ marbles.reset = function (left, right) {
   this.update($marbles => {
     const $customMix = get(customMix);
 
+    if (typeof left !== "undefined" && typeof right !== "undefined")
+    {
+      $marbles.numbers = {left, right};
+    }
+
     if ($customMix)
     {
-      let mix = $customMix.split("-");
-      mix.left = mix[0];
-      mix.right = mix[1];
+      let mix = {left: 0, right: 0};
+      [mix.left, mix.right] = $customMix.split("-");
       $marbles.numbers = {left: mix.left.length, right: mix.right.length};
       $marbles.left = mix.left.split('').map(color => color === 'r'? new RedMarble(): new BlueMarble());
       $marbles.right = mix.right.split('').map(color => color === 'r'? new RedMarble(): new BlueMarble());
     }
-    else if (typeof left !== "undefined" && typeof right !== "undefined")
+    else
     {
-      $marbles.numbers = {left, right};
       $marbles.left = [...Array($marbles.numbers.left)].map(i => new BlueMarble());
       $marbles.right = [...Array($marbles.numbers.right)].map(i => new RedMarble());
     }
@@ -57,14 +60,26 @@ marbles.reset = function (left, right) {
 }
 marbles.encode = function () {
   // Returns an URL encoded string of the numbers of marbles for left and right
+  const $customMix = get(customMix);
+  if ($customMix) {
+    return urlEncode64[62] + $customMix;
+  }
+  
   let $marbles = get(this);
   return urlEncode64[$marbles.numbers.left] + urlEncode64[$marbles.numbers.right];
 }
 marbles.decode = function (code) {
   if (code) {
-    let left = urlEncode64.indexOf(code[0]);
-    let right = urlEncode64.indexOf(code[1]);
-    if (left <= 20 && right <= 20) this.reset(left, right);
+    if (code[0] === urlEncode64[62]) {
+      customMix.set(/-([br]*-[br]*)/.exec(code)[1]);
+      this.reset();
+    }
+    else
+    {
+      let left = urlEncode64.indexOf(code[0]);
+      let right = urlEncode64.indexOf(code[1]);
+      if (left <= 20 && right <= 20) this.reset(left, right);
+    }
   } else this.reset(8, 8);
 }
 
