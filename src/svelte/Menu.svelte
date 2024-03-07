@@ -131,8 +131,8 @@
 </button>
 
 {#if visible}
-<div transition:fade id="cover" on:click={closeMenu}></div>
-<div transition:fly="{{ x: -300, duration: 600 }}" id="menu">
+<div transition:fade|global id="cover" on:click={closeMenu}></div>
+<div transition:fly|global="{{ x: -300, duration: 600 }}" id="menu">
   <button on:click|preventDefault="{() => setUpBoard()}">Clear Board</button>
   {#if $rooms}
     {#if !$socket}
@@ -144,7 +144,7 @@
   {/if}
   <button on:click="{() => showChallenges = !showChallenges}">Challenges <span class:up={showChallenges} class="arrow">&gt;</span></button>
   {#if showChallenges}
-  <ol transition:slide id="challenges">
+  <ol transition:slide|global id="challenges">
     {#each challenges as challenge, challengeId (challengeId)}
     <li><a href="{$basePath + '?code=' + challenge.code}"
         on:click|preventDefault="{() => setUpBoard(challenge, challengeId)}">

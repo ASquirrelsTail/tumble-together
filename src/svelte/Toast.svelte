@@ -15,7 +15,7 @@
   
 </script>
 {#if $toastMessage}
-<div transition:fly="{{x: 300, duration: 400}}" class="toast-container">
+<div transition:fly|global="{{x: 300, duration: 400}}" class="toast-container">
   <div class="toast" on:click={clear}>
     {$toastMessage}
   </div>

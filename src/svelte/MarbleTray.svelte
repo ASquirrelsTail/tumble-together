@@ -11,7 +11,7 @@
   {#each marbles as marble, i (i)}
   {#if result}
     <img src="{$basePath}images/marble{marble.color}.svg" alt="{marble.color} marble"
-      in:fly="{{ x: -200, duration: 600 }}">
+      in:fly|global="{{ x: -200, duration: 600 }}">
   {:else}
     <img src="{$basePath}images/marble{marble.color}.svg" alt="{marble.color} marble">
   {/if}

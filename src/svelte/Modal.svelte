@@ -16,8 +16,8 @@
 </script>
 
 {#if visible}
-<div transition:fade class:fading={!visible} class="cover" on:click|self|preventDefault={closeModal}>
-  <div transition:fly="{{ y: -300, duration: 600 }}" class="modal">
+<div transition:fade|global class:fading={!visible} class="cover" on:click|self|preventDefault={closeModal}>
+  <div transition:fly|global="{{ y: -300, duration: 600 }}" class="modal">
     <header>
       <h2>{title}</h2>
       <button class="close-modal" on:click={closeModal}>X</button>
